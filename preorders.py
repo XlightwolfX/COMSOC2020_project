@@ -28,17 +28,15 @@ def get_all_partial_orders(alternatives, preorder):
     top_sorts = nx.algorithms.dag.all_topological_sorts(super_G)
     return [[super_G.nodes[node]['members'] for node in sort] for sort in top_sorts]
 
-def get_all_strict_orders(alternatives, preorder):
-    """given a preorder, return all the strict orders consistent with it
+def partial2strict(partial_orders):
+    """given a list of partial orders, return all the strict orders consistent with them
 
     Parameters:
-    alternatives (set(int)): all the possible alternatives
-    preorder (set((int,int))): a preorder, represented as a set of edges between alternatives
+    partial_orders list(list(set(int))): list partial orders (each is a list of sets)
 
     Returns:
     list(list(int)): strict orders"""
 
-    partial_orders = get_all_partial_orders(alternatives, preorder)
     strict_orders = []
     for partial in partial_orders:
         # orders "derived" from this order
@@ -59,3 +57,16 @@ def get_all_strict_orders(alternatives, preorder):
         strict_orders += iter_order
 
     return strict_orders
+
+def get_all_strict_orders(alternatives, preorder):
+    """given a preorder, return all the strict orders consistent with it
+
+    Parameters:
+    alternatives (set(int)): all the possible alternatives
+    preorder (set((int,int))): a preorder, represented as a set of edges between alternatives
+
+    Returns:
+    list(list(int)): strict orders"""
+
+    partial_orders = get_all_partial_orders(alternatives, preorder)
+    return partial2strict(partial_orders)
