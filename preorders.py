@@ -28,33 +28,29 @@ def get_all_partial_orders(alternatives, preorder):
     top_sorts = nx.algorithms.dag.all_topological_sorts(super_G)
     return [[super_G.nodes[node]['members'] for node in sort] for sort in top_sorts]
 
-def partial2strict(partial_orders):
-    """given a list of partial orders, return all the strict orders consistent with them
+def partial2strict(partial_order):
+    """given a partial order, return all the strict orders consistent with it
 
     Parameters:
-    partial_orders list(list(set(int))): list partial orders (each is a list of sets)
+    partial_order list(set(int)): partial order (a list of sets, and being in the same set = being equivalent)
 
     Returns:
     list(list(int)): strict orders"""
 
+    # orders "derived" from this order
     strict_orders = []
-    for partial in partial_orders:
-        # orders "derived" from this order
-        iter_order = []
 
-        # each element is a set of "equivalent" elements 
-        for element in partial:
+    # each element is a set of "equivalent" elements 
+    for element in partial_order:
+        # if a = b, then we can get a > b or b > a (i.e., permutations)
+        all_perms = list(itertools.permutations(list(element)))
 
-            # if a = b, then we can get a > b or b > a (i.e., permutations)
-            all_perms = list(itertools.permutations(list(element)))
-
-            # add all the possible permutations to all the orders we have derived up to this point
-            if iter_order:
-                iter_order = [o+p for o in iter_order for p in all_perms]
-            # base case if no order yet
-            else:
-                iter_order = all_perms
-        strict_orders += iter_order
+        # add all the possible permutations to all the orders we have derived up to this point
+        if strict_orders:
+            strict_orders = [o+p for o in strict_orders for p in all_perms]
+        # base case if no order yet
+        else:
+            strict_orders = all_perms
 
     return strict_orders
 
@@ -69,4 +65,9 @@ def get_all_strict_orders(alternatives, preorder):
     list(list(int)): strict orders"""
 
     partial_orders = get_all_partial_orders(alternatives, preorder)
-    return partial2strict(partial_orders)
+    strict_orders = []
+    # for each partial order, get the consistent orders
+    for partial_order in partial_orders:
+        strict_orders += partial2strict(partial_order)
+
+    return strict_orders
