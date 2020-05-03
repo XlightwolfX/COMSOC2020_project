@@ -19,11 +19,11 @@ class Preorder:
         factorial = lambda n : 1 if n <= 1 else n * factorial(n-1)
         self.MAX_STRICT_ORDERS = factorial(len(preorder))
 
-    def _get_all_partial_orders(self):
-        """given a preorder, return all the partial orders consistent with it
+    def _get_all_weak_orders(self):
+        """given a preorder, return all the weak orders consistent with it
 
         Returns:
-        list(list(set(int))): all partial orders"""
+        list(list(set(int))): all weak orders"""
 
         # General idea:
         # first, we construct the supergraph composed of condensated strongly connected components
@@ -38,11 +38,11 @@ class Preorder:
         top_sorts = nx.algorithms.dag.all_topological_sorts(super_G)
         return [[super_G.nodes[node]['members'] for node in sort] for sort in top_sorts]
 
-    def _partial2strict(self, partial_order):
-        """given a partial order, return all the strict orders consistent with it
+    def _weak2strict(self, weak_order):
+        """given a weak order, return all the strict orders consistent with it
 
         Parameters:
-        partial_order list(set(int)): partial order (a list of sets, and being in the same set = being equivalent)
+        weak_order list(set(int)): weak order (a list of sets, and being in the same set = being equivalent)
 
         Returns:
         list(list(int)): strict orders"""
@@ -51,7 +51,7 @@ class Preorder:
         strict_orders = []
 
         # each element is a set of "equivalent" elements 
-        for element in partial_order:
+        for element in weak_order:
             # if a = b, then we can get a > b or b > a (i.e., permutations)
             all_perms = list(itertools.permutations(list(element)))
 
@@ -71,11 +71,11 @@ class Preorder:
         list(list(int)): strict orders"""
 
         if self._strict_orders is None:
-            partial_orders = self._get_all_partial_orders()
+            weak_orders = self._get_all_weak_orders()
             self._strict_orders = []
-            # for each partial order, get the consistent orders
-            for partial_order in partial_orders:
-                self._strict_orders += self._partial2strict(partial_order)
+            # for each weak order, get the consistent orders
+            for weak_order in weak_orders:
+                self._strict_orders += self._weak2strict(weak_order)
 
         return self._strict_orders
 
