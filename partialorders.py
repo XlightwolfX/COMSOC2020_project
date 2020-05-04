@@ -18,12 +18,8 @@ class PartialOrder:
 
 
         # we begin by creating the partial order corresponding to our strict order.
-        graph = dict()
-        ll = list(strict)
-        for a in strict:
-            ll.remove(a)
-            graph[a] = list(ll)
-        order = PartialOrder(graph)
+        order = PartialOrder(strict)
+        graph = dict(order.partial)
         
         # then, we keep removing edges untill we reach the desired indecisivness
 
@@ -41,12 +37,22 @@ class PartialOrder:
                 order = PartialOrder(graph)
 
 
-    def __init__(self, partial):
+    def __init__(self, inpt):
         """Initialize the object with a partial.
 
         Parameters:
-        partial (dict(int, list(int))): a partial order, represented as an adjacency list
+        inpt ([dict(int, list(int)), list(int)]): either a partial order, represented as an adjacency list, or a strict order.
         """
+        if isinstance(inpt, dict):
+            partial = inpt
+        else:
+            # it is a strict order / list. Generate it from here.
+            partial = dict()
+            ll = list(inpt)
+            for a in inpt:
+                ll.remove(a)
+                partial[a] = list(ll)
+
         self.partial = partial
         # will be populated at the first call of get_strict_orders
         self._strict_orders = None
