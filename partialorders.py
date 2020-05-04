@@ -5,6 +5,42 @@ import random
 class PartialOrder:
     """Class representing a partial order."""
 
+    @classmethod
+    def generate_from_strict(cls, strict, indecisivness):
+        """ Given a strict order, generate a partial order consistent with it.
+
+        Parameters:
+        strict (list(int)): the strict order
+        indecisivness (float): the degree of indecisivness the resulting partial order must have
+
+        Returns:
+        (PartialOrder): the randomly generated partial order"""
+
+
+        # we begin by creating the partial order corresponding to our strict order.
+        graph = dict()
+        ll = list(strict)
+        for a in strict:
+            ll.remove(a)
+            graph[a] = list(ll)
+        order = PartialOrder(graph)
+        
+        # then, we keep removing edges untill we reach the desired indecisivness
+
+        while True:
+            # if we reached it, good, return it
+            if order.compute_indecisivness() >= indecisivness:
+                return order
+            else:
+                # pick a node with a non-empty list of edges
+                head = random.choice([k for k in graph.keys() if graph[k]])
+                # random node connected to it
+                tail = random.choice(graph[head])
+                # remove it
+                graph[head].remove(tail)
+                order = PartialOrder(graph)
+
+
     def __init__(self, partial):
         """Initialize the object with a partial.
 
@@ -39,19 +75,24 @@ class PartialOrder:
         """ Check whether this partial order is consistent with another (i.e. they share a strict order).
 
         Parameters:
-        other (PartialOrder): another partial order
+        other ([PartialOrder, list(int)]): another order. Can be either a partial orther or a strict order
 
         Returns:
         (bool): the verdict"""
 
         my_strict_orders = self.get_strict_orders()
 
-        for strict_order in other.get_strict_orders():
-            if strict_order in my_strict_orders:
-                return True
+        if isinstance(other, PartialOrder):
+            for strict_order in other.get_strict_orders():
+                if strict_order in my_strict_orders:
+                    return True
 
-        return False
+            return False
+        # it is a strict order
+        else:
+            return other in my_strict_orders
 
+    # this might not be a good score
     def compute_indecisivness(self):
         """ Give "indecisivness" score (i.e., number of consistent strict orders) to self (normalized)
 
