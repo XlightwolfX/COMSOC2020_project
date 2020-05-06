@@ -95,8 +95,10 @@ class PartialOrder:
 
             return False
         # it is a strict order
-        else:
+        elif isinstance(other, list):
             return other in my_strict_orders
+        else:
+            raise NotImplementedError
 
     # this might not be a good score
     def compute_indecisivness(self):
@@ -131,7 +133,7 @@ class PartialOrder:
             min_score = float('inf')
             candidadate_list = None
 
-            for i, p in preorders.items():
+            for i, p in orders.items():
                 if self.check_consistency(p):
                     score = p.compute_indecisivness()
                     if score < min_score:
@@ -140,10 +142,13 @@ class PartialOrder:
                     elif score == min_score:
                         candidadate_list.append(i)
 
+                # if he's less decided then us, we don't delegate
+                candidadate_list = [] if min_score > self.compute_indecisivness() else candidadate_list
+
         elif criteria == 'random': # randomly pick a consistent parital order
-            consistent_preorders = [i for i,p in preorders.items() if self.check_consistency(p)]
-            candidadate_list = [random.choice(consistent_preorders)] if consistent_preorders else None
-            
+            # TODO first, decide based on indecisivness whether i votes or not
+            consistent_orders = [i for i,p in orders.items() if self.check_consistency(p)]
+            candidadate_list = [random.choice(consistent_orders)] if consistent_orders else None
         else:
             raise NotImplementedError('This delegation strategy has not been implemented.')
 
