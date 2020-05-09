@@ -2,6 +2,7 @@ import argparse
 import os
 import itertools as it
 from random import randint
+from votingrules import VotingRules
 
 
 class Dataset:
@@ -68,55 +69,11 @@ class Dataset:
 
         return preferences, counts, candidates_nr
 
-    def _find_winner(self, scoreboard):
-        winners = set()
-        m_val = max(scoreboard.values())
-        for k, val in scoreboard.items():
-            if val == m_val:
-                winners.add(k)
-        return winners
-
     def count_voters(self):
         return sum(self.counts)
 
     def count_unique_ballots(self):
         return len(self.preferences)
-
-    def elect_borda(self):
-        scoreboard = {i: 0 for i in self.candidates}
-
-        for candidate in self.candidates:
-            for ballot, count in zip(self.preferences, self.counts):
-                scoreboard[candidate] += (len(self.candidates) - 1 - ballot.index(candidate)) * count
-        return self._find_winner(scoreboard)
-
-    def elect_plurality(self):
-        scoreboard = {i: 0 for i in self.candidates}
-
-        for candidate in self.candidates:
-            for ballot, count in zip(self.preferences, self.counts):
-                if ballot[0] == candidate:
-                    scoreboard[candidate] += count
-        return self._find_winner(scoreboard)
-
-    def elect_copeland(self):
-        scoreboard = {i: 0 for i in self.candidates}
-
-        for candidate in self.candidates:
-            contenders = self.candidates - {candidate}
-            for enemy in contenders:
-                pairwise_c = 0
-                pairwise_e = 0
-                for ballot, count in zip(self.preferences, self.counts):
-                    if ballot.index(candidate) < ballot.index(enemy):
-                        pairwise_c += count
-                    elif ballot.index(candidate) > ballot.index(enemy):
-                        pairwise_e += count
-                if pairwise_c > pairwise_e:
-                    scoreboard[candidate] += 1
-                elif pairwise_c < pairwise_e:
-                    scoreboard[candidate] -= 1
-        return self._find_winner(scoreboard)
 
 
 # runnable for testing
@@ -134,6 +91,6 @@ if __name__ == "__main__":
     print(data.counts)
     print(data.count_voters())
     print(data.count_unique_ballots())
-    print(f'Borda winner: {data.elect_borda()}')
-    print(f'Plurality winner: {data.elect_plurality()}')
-    print(f'Copeland winner:{data.elect_copeland()}')
+    print(f'Borda winner: {VotingRules.elect_borda(data.preferences, data.counts)}')
+    print(f'Plurality winner: {VotingRules.elect_plurality(data.preferences, data.counts)}')
+    print(f'Copeland winner:{VotingRules.elect_copeland(data.preferences, data.counts)}')

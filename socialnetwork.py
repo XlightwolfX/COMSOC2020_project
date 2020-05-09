@@ -3,7 +3,7 @@ from voter import Voter
 from networks import generate_graphs
 import random
 from collections import Counter
-
+from votingrules import VotingRules
 import networkx as nx
 
 class SocialNetwork:
@@ -136,7 +136,8 @@ class SocialNetwork:
             return next_vote
 
     def preference_list(self):
-        """ Return the preference list of the social network. 
+        """ Return the preference list of the social network. This function 
+        creates the delegations, casts the votes and returns the preference lists.
 
         Returns:
         list(int), list(int): all the ballots with their counts """
@@ -175,5 +176,9 @@ if __name__ == '__main__':
 
     data = Dataset(source='random', rand_params=[4, 100])
     SN = SocialNetwork(data)
-    SN.pick_delegations('direct')
-    print(SN.preference_list())
+    preferences, counts = SN.preference_list()
+    print(preferences, counts)
+
+    print(f'Borda winner: {VotingRules.elect_borda(preferences, counts)}')
+    print(f'Plurality winner: {VotingRules.elect_plurality(preferences, counts)}')
+    print(f'Copeland winner:{VotingRules.elect_copeland(preferences, counts)}')
