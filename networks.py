@@ -2,7 +2,10 @@ import networkx as nx
 
 
 def generate_graphs(num_voters, num_graphs, gtype='scale-free', seed=42):
-    gtypes = {'scale-free': nx.scale_free_graph}
+    gtypes = {
+        'scale-free': nx.scale_free_graph,
+        'path': lambda n, seed: nx.generators.classic.path_graph(n, create_using = nx.classes.multidigraph.MultiDiGraph)
+        }
 
     if gtype not in gtypes:
         raise NotImplementedError('This graph type has not been implemented.')

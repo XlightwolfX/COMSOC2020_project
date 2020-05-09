@@ -61,6 +61,10 @@ class PartialOrder:
         factorial = lambda n : 1 if n <= 1 else n * factorial(n-1)
         self.MAX_STRICT_ORDERS = factorial(len(partial))
 
+    def __repr__(self):
+        """`to string` method"""
+        return str(self.partial)
+
     def get_strict_orders(self):
         """given a partial order, return all the strict orders consistent with it
 
@@ -89,11 +93,11 @@ class PartialOrder:
         my_strict_orders = self.get_strict_orders()
 
         if isinstance(other, PartialOrder):
-            for strict_order in other.get_strict_orders():
-                if strict_order in my_strict_orders:
+            for mine, other in zip(my_strict_orders, other.get_strict_orders()):
+                if mine == other:
                     return True
-
             return False
+
         # it is a strict order
         elif isinstance(other, list):
             return other in my_strict_orders
@@ -116,41 +120,3 @@ class PartialOrder:
         (list(int)): a strict order"""
 
         return random.choice(self.get_strict_orders())
-
-    def pick_delegation(self, orders, criteria = 'min_indecision'):
-        """ Choose whom to delegate to. Criteria: among those who are consistent, pick 
-        the less indecisive. If none is consistent, return none."
-
-        Parameters:
-        orders (dict(t, PartialOrder)): pool of partial orders to choose from. "t" indicates a generic type (will probably be int)
-        criteria (str): specify which criteria to use.
-
-        Returns:
-        ([list(t), None]): indexes of the choosen partial orders OR None if none was available!"""
-
-
-        if criteria == 'min_indecision': # pick alternative that minimizes indecision
-            min_score = float('inf')
-            candidadate_list = None
-
-            for i, p in orders.items():
-                if self.check_consistency(p):
-                    score = p.compute_indecisivness()
-                    if score < min_score:
-                        min_score = score
-                        candidadate_list = [i]
-                    elif score == min_score:
-                        candidadate_list.append(i)
-
-                # if he's less decided then us, we don't delegate
-                candidadate_list = [] if min_score > self.compute_indecisivness() else candidadate_list
-
-        elif criteria == 'random': # randomly pick a consistent parital order
-            # TODO first, decide based on indecisivness whether i votes or not
-            consistent_orders = [i for i,p in orders.items() if self.check_consistency(p)]
-            candidadate_list = [random.choice(consistent_orders)] if consistent_orders else None
-        else:
-            raise NotImplementedError('This delegation strategy has not been implemented.')
-
-        # three cases: none, one or more than one
-        return candidadate_list
