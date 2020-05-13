@@ -23,13 +23,13 @@ class SocialNetwork:
         for strict, count in zip(dataset.preferences, dataset.counts):
             for _ in range(count):
                 # TODO: parametrize the indiff level
-                partial = PartialOrder.generate_from_strict(strict, 1)# random.choice([0, 0.3, 1]))
+                partial = PartialOrder.generate_from_strict(strict, 0.2)# random.choice([0, 0.3, 1]))
                 voter = Voter(partial, strict)
                 self.id2voter[voter_id_count] = voter
                 voter_id_count += 1
 
         if isinstance(graph, str):
-            # generate this graph
+            # generate this type of graph
             self.graph = list(generate_graphs(num_voters=dataset.count_voters(), num_graphs=1, gtype=graph))[0]
         elif isinstance(graph, dict):
             self.graph = nx.DiGraph(graph)
@@ -98,17 +98,8 @@ class SocialNetwork:
         # TODO abstain instead
 
         # for every voter:
-        for voter_id, voter in self.id2voter.items():
-            # if we don't have a vote already...
-            if voter_id not in self.votes.keys():
-                # if he does not delegate, then we cast a random vote.
-                # Notice if that the voter is DECISIVE, this is simply equivalent
-                # to getting his true order
-                if self.delegations[voter_id] is None:
-                    self.votes[voter_id] = voter.cast_random_vote()
-                # otherwise, retrieve the vote of the person he was delegating to.
-                else:
-                    self.votes[voter_id] = self._retrieve_vote(self.delegations[voter_id])
+        for voter_id in self.id2voter.keys():
+            self.votes[voter_id] = self._retrieve_vote(voter_id)
 
     def _retrieve_vote(self, voter_id):
         """ Recursvely get the voter_id's vote from delegation graph 
@@ -165,7 +156,14 @@ class SocialNetwork:
             # ...along with its count
             counts.append(count)
 
+        assert (sum(counts) == len(self.id2voter.keys()))
+
         return preferences, counts
+
+    def pretty_print_pref(self):
+        preferences, counts = self.preference_list()
+        for pref, count in sorted(zip(preferences, counts), key = lambda x: -x[1]):
+            print(f"{count} voters think {pref}")
 
 
 
@@ -174,10 +172,14 @@ if __name__ == '__main__':
 
     from dataset import Dataset
 
-    data = Dataset(source='random', rand_params=[4, 100])
+    data = Dataset(source='random', rand_params=[4, 500])
     SN = SocialNetwork(data)
     preferences, counts = SN.preference_list()
-    print(preferences, counts)
+    SN.pretty_print_pref()
+
+    print([f'{voter}->{delegation}' for voter, delegation in SN.delegations.items()
+        if delegation is not None])
+    
 
     print(f'Borda winner: {VotingRules.elect_borda(preferences, counts)}')
     print(f'Plurality winner: {VotingRules.elect_plurality(preferences, counts)}')
