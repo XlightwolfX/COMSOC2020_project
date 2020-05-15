@@ -81,28 +81,29 @@ class PartialOrder:
 
         return self._strict_orders
 
-    def check_consistency(self, other):
-        """ Check whether this partial order is consistent with another (i.e. they share a strict order).
+    def issuperset(self, other):
+        """ Check whether this partial order is a STRICT superset of another.
 
         Parameters:
-        other ([PartialOrder, list(int)]): another order. Can be either a partial orther or a strict order
+        other (PartialOrder): another partial order.
 
         Returns:
         (bool): the verdict"""
 
-        my_strict_orders = self.get_strict_orders()
+        # get transitive closure of the two orders (this can be seen as a "normalization": all preferences are representend)
 
-        if isinstance(other, PartialOrder):
-            for mine, other in zip(my_strict_orders, other.get_strict_orders()):
-                if mine == other:
-                    return True
-            return False
+        my_transitive_closure = nx.algorithms.dag.transitive_closure(nx.DiGraph(self.partial))
+        other_transitive_closure = nx.algorithms.dag.transitive_closure(nx.DiGraph(other.partial))
 
-        # it is a strict order
-        elif isinstance(other, list):
-            return other in my_strict_orders
-        else:
-            raise NotImplementedError
+        # get the edges
+
+        my_edges = set(my_transitive_closure.edges())
+        other_edges = set(other_transitive_closure.edges())
+
+        # check whether it is a superset
+
+        return my_edges != other_edges and my_edges.issuperset(other_edges)
+
 
     # this might not be a good score
     def compute_indecisivness(self):

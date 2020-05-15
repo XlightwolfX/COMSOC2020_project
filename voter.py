@@ -11,7 +11,7 @@ class Voter:
         partial (PartialOrder): a partial order representing the knowledge of the player
         strict (list(int): a strict order representing his true order"""
 
-        assert partial.check_consistency(strict), "A voter's knowledge of his order must be consistent with his true order."
+        assert strict in partial.get_strict_orders(), "A voter's knowledge of his order must be consistent with his true order."
 
         self.partial = partial
         self.strict = strict
@@ -38,27 +38,25 @@ class Voter:
         Returns:
         ([list(int)]): indexes of the choosen delegators. Might be empty!"""
 
+        assert len(neighbours_ids) == len(neighbours)
 
-        if criteria == 'min_indecision': # pick alternative that minimizes indecision
+        if criteria == 'min_indecision': # pick strict superset that minimizes indecision
             min_score = float('inf')
             candidadate_list = []
 
-            for i, p in zip(neighbours_ids, neighbours):
-                if self.partial.check_consistency(p.partial):
-                    score = p.indecisivness
+            for i, n in zip(neighbours_ids, neighbours):
+                # between all the strict supersets...
+                if n.partial.issuperset(self.partial):
+                    # get least indecisive (will be surely more than us)
+                    score = n.indecisivness
                     if score < min_score:
                         min_score = score
                         candidadate_list = [i]
                     elif score == min_score:
                         candidadate_list.append(i)
 
-                # if he's less or equally decided then us, we don't delegate
-                candidadate_list = [] if min_score >= self.indecisivness else candidadate_list
-
         elif criteria == 'random': # randomly pick a consistent parital order
-            # TODO first, decide based on indecisivness whether i votes or not
-            consistent_orders = [i for i, p in zip(neighbours_ids, neighbours) if self.partial.check_consistency(p.partial)]
-            candidadate_list = [random.choice(consistent_orders)] if consistent_orders else []
+            raise NotImplementedError('Random delegation strategy has not been implemented.')
         else:
             raise NotImplementedError('This delegation strategy has not been implemented.')
 
