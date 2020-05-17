@@ -58,14 +58,24 @@ class VotingRules:
         return cls._find_winner(scoreboard)
 
     @classmethod
-    def elect(cls, rule, preferences, counts):
+    def elect(cls, rule, preferences, counts, tiebreaking = lambda x : x):
+        """ Elect a rule.
+
+        Parameters:
+        rule (str): the name of the rule to elect.
+        preferences (list(list(int))): ballots
+        counts (list(int)): one per ballot: how many people submitted that ballot
+        tiebreaking (function): function to apply to the set of winners """
+        
         assert rule in cls.rules, f'Unknown rule {rule}. Known rules: {cls.rules}'
 
         if rule == 'plurality':
-            return cls._elect_plurality(preferences, counts)
+            winners = cls._elect_plurality(preferences, counts)
         elif rule == 'borda':
-            return cls._elect_borda(preferences, counts)
+            winners = cls._elect_borda(preferences, counts)
         elif rule == 'copeland':
-            return cls._elect_copeland(preferences, counts)
+            winners = cls._elect_copeland(preferences, counts)
         else:
             raise NotImplementedError(f'Rule {rule} unknown. Known rules: {cls.rules}')
+
+        return tiebreaking(winners)

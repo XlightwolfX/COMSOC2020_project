@@ -2,22 +2,21 @@ from partialorders import PartialOrder
 from voter import Voter
 from networks import generate_graphs
 import random
-from collections import Counter, defaultdict
-from votingrules import VotingRules
+from collections import Counter
 import networkx as nx
-from tqdm import tqdm
-from utils import regret
+import matplotlib.pyplot as plt
 
 class SocialNetwork:
     """Class representing the social network"""
 
-    def __init__(self, dataset, graph = 'scale-free'):
+    def __init__(self, dataset, graph = 'scale-free', print_graph = False):
         """ Initialize the Social Network.
 
         Parameters:
         dataset (Dataset): contains preference information
         graph [str, dict(int, list(int))]: if str, specify a random graph generation strategy. Otherwise,
-                                            specify a graph (dict) consistent with the dataset."""
+                                            specify a graph (dict) consistent with the dataset.
+        print_graph (bool): whether to print the graph just created """
 
         # for every preference, create COUNTS number of voters
         voter_id_count = 0
@@ -38,6 +37,10 @@ class SocialNetwork:
             assert len(self.graph.nodes()) == dataset.count_voters(), "The passed graph is not consistent with the dataset."
         else:
             raise NotImplementedError("Graphs can be either a string (random generation strategy) or dictionaries.")
+
+        if print_graph:
+            nx.draw(self.graph)
+            plt.show()
 
     def getNeighbours(self, voter_id):
         """ Returns a list of neighbours for a voter 
@@ -199,23 +202,58 @@ class SocialNetwork:
 if __name__ == '__main__':
     # test
 
+    # test-specific imports
+    import argparse
     from dataset import Dataset
-
-    data = Dataset(source='random', rand_params=[4, 300])
-    SN = SocialNetwork(data)
     import numpy as np
-    for paradigm in ['liquid', 'direct']:
-        regrets = defaultdict(lambda : [])
-        for _ in tqdm(range(50)):
-            preferences, counts = SN.get_preferences(paradigm)
+    from tqdm import tqdm
+    from utils import regret, partial_regret
+    from votingrules import VotingRules
+    from collections import defaultdict
 
-            # min == lexicographic rule
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--alternatives', type=int, default=4, help='Number of alternatives.')
+    parser.add_argument('--voters', type=int, default=3000, help='Number of voters.')
+    parser.add_argument('--experiments', type=int, default=500, help='Number of experiments.')
+
+    args = parser.parse_args()
+
+    # create the SN
+    data = Dataset(source='random', rand_params=[args.alternatives, args.voters])
+    true_preferences, true_counts = data.preferences, data.counts
+    SN = SocialNetwork(data, graph = 'regular', print_graph = True)
+    
+    # comparing direct and liquid
+    for paradigm in ['direct', 'liquid']:
+        # datastructure used to compute avg regret and distribution of winners
+        regrets = defaultdict(lambda : [])
+        winners = defaultdict(lambda : 0)
+        # repeat the experiment N times
+        for _ in tqdm(range(args.experiments)):
+            # run the delegation mechanism, assign a preference to everybody a count the ballots
+            SN_preferences, SN_counts = SN.get_preferences(paradigm)
+
+            # per every rule...
             for rule in VotingRules.rules:
-                winner = min(VotingRules.elect(rule, preferences, counts))
-                regrets[rule].append(regret(winner, preferences, counts))
+                # min == lexicographic rule
+                winner = VotingRules.elect(rule, true_preferences, true_counts, tiebreaking = min)
+                winners[winner] += 1
+                # note: if here we use SN_preferences, SN_counts we compute the regret
+                # on the "reported" ballots not the TRUE preferences.
+                # Interestingly, if here we use SN_preferences, SN_counts, liquid democracy
+                # vastly outperform direct...
+                # TODO: investigate this!
+
+                # regular regret
+                regrets[rule].append(regret(winner, data.preferences, data.counts))
+
+                # partial regret
+                # regrets[rule].append(partial_regret(winner, SN.id2voter.values()))
 
         print(f'## average regret of `{paradigm}` paradigm ##')
         for rule, val in regrets.items():
             val = np.array(val)
             print(f'{rule}: {val.mean():.4f} (+-{val.std():.4f})')
+        # TODO main issue: it seems like using either mechanism does not make any difference in result.
+        print(f'\ncounts of winners: {[(wnnr, cnt) for wnnr, cnt in winners.items()]}')
         print(f'#####')

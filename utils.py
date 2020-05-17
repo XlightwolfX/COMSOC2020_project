@@ -10,6 +10,18 @@ def regret(winner, preferences, counts):
 
     return sum(regret) * 1. / len(regret)
 
+def partial_regret(winner, voters):
+    # compute average partial regret, that is, per each
+    # voter number of alternatives that are preferred to the winner
+    p_regret = []
+
+    for voter in voters:
+        transitive_closure = nx.algorithms.dag.transitive_closure(nx.DiGraph(voter.partial.partial))
+        p_regret.append(sum((1 for i, j in transitive_closure.edges() if j == winner)))
+
+    return sum(p_regret) * 1. / len(p_regret)
+
+
 def get_dag_edit_distance(graph1, graph2, optim=False):
     """
     Calculate graph edit distance: minimum sequence of node and edge operations
