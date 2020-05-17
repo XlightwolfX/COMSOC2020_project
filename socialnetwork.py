@@ -221,7 +221,7 @@ if __name__ == '__main__':
     # create the SN
     data = Dataset(source='random', rand_params=[args.alternatives, args.voters])
     true_preferences, true_counts = data.preferences, data.counts
-    SN = SocialNetwork(data, graph = 'regular', print_graph = True)
+    SN = SocialNetwork(data, graph = 'random', print_graph = True)
     
     # comparing direct and liquid
     for paradigm in ['direct', 'liquid']:
