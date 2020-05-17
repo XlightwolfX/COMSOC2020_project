@@ -1,5 +1,7 @@
 class VotingRules:
 
+    rules = ['plurality', 'borda', 'copeland']
+
     @classmethod
     def _find_winner(cls, scoreboard):
         winners = set()
@@ -17,7 +19,7 @@ class VotingRules:
         return scoreboard, candidates
 
     @classmethod
-    def elect_borda(cls, preferences, counts):
+    def _elect_borda(cls, preferences, counts):
         scoreboard, candidates = cls._prepare_scoreboard_and_candidates(preferences)
 
         for candidate in candidates:
@@ -26,7 +28,7 @@ class VotingRules:
         return cls._find_winner(scoreboard)
 
     @classmethod
-    def elect_plurality(cls, preferences, counts):
+    def _elect_plurality(cls, preferences, counts):
         scoreboard, candidates = cls._prepare_scoreboard_and_candidates(preferences)
 
         for candidate in candidates:
@@ -36,7 +38,7 @@ class VotingRules:
         return cls._find_winner(scoreboard)
 
     @classmethod
-    def elect_copeland(cls, preferences, counts):
+    def _elect_copeland(cls, preferences, counts):
         scoreboard, candidates = cls._prepare_scoreboard_and_candidates(preferences)
 
         for candidate in candidates:
@@ -54,3 +56,16 @@ class VotingRules:
                 elif pairwise_c < pairwise_e:
                     scoreboard[candidate] -= 1
         return cls._find_winner(scoreboard)
+
+    @classmethod
+    def elect(cls, rule, preferences, counts):
+        assert rule in cls.rules, f'Unknown rule {rule}. Known rules: {cls.rules}'
+
+        if rule == 'plurality':
+            return cls._elect_plurality(preferences, counts)
+        elif rule == 'borda':
+            return cls._elect_borda(preferences, counts)
+        elif rule == 'copeland':
+            return cls._elect_copeland(preferences, counts)
+        else:
+            raise NotImplementedError(f'Rule {rule} unknown. Known rules: {cls.rules}')

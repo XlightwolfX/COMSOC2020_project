@@ -1,5 +1,14 @@
 import networkx as nx
 
+def regret(winner, preferences, counts):
+    regret = []
+    assert len(preferences) == len(counts)
+
+    for preference, count in zip(preferences, counts):
+        assert winner in preference
+        regret += [preference.index(winner)] * count
+
+    return sum(regret) * 1. / len(regret)
 
 def get_dag_edit_distance(graph1, graph2, optim=False):
     """
