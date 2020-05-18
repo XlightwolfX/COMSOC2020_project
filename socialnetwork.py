@@ -215,6 +215,7 @@ if __name__ == '__main__':
     parser.add_argument('--experiments', type=int, default=500, help='Number of experiments.')
     parser.add_argument('--experiment_type', type=str, default='random_graph', help='Which experiments?')
     parser.add_argument('--graph_type', type=str, default='path', help='Type of graph to be generated')
+    parser.add_argument('--print_graph', action='store_true', help='Print the generated graph')
     parser.add_argument('--use_partial_regret', action='store_true', help='Use the alternative metric of partial regret instead.')
 
     args = parser.parse_args()
@@ -222,7 +223,7 @@ if __name__ == '__main__':
     if args.experiment_type == 'random_graph':
         data = Dataset(source='random', rand_params=[args.alternatives, args.voters])
         true_preferences, true_counts = data.preferences, data.counts
-        SN = SocialNetwork(strategy = 'dataset_and_random_edges', dataset = data, graph_generation = args.graph_type, print_graph = True)
+        SN = SocialNetwork(strategy = 'dataset_and_random_edges', dataset = data, graph_generation = args.graph_type, print_graph = args.print_graph)
 
     elif args.experiment_type == 'case_study_star':
         # this is a simple case study where everyone is connected to a center
@@ -240,7 +241,16 @@ if __name__ == '__main__':
 
         true_preferences = [voter.strict for voter in id2voter.values()]
         true_counts = [1] * len(true_preferences)
-        SN = SocialNetwork(strategy = 'from_voter_graph', id2voter = id2voter, graph = graph)
+        SN = SocialNetwork(strategy = 'from_voter_graph', id2voter = id2voter, graph = graph, print_graph = args.print_graph)
+
+    elif args.experiment_type == 'typed_graph':
+        from typed_graph import generate_typed_graph
+
+        id2voter, graph = generate_typed_graph(N = args.voters)
+
+        true_preferences = [voter.strict for voter in id2voter.values()]
+        true_counts = [1] * len(true_preferences)
+        SN = SocialNetwork(strategy = 'from_voter_graph', id2voter = id2voter, graph = graph, print_graph = args.print_graph)
 
     else:
         raise NotImplementedError('This experiment does not exist')
