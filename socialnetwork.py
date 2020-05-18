@@ -9,34 +9,32 @@ import matplotlib.pyplot as plt
 class SocialNetwork:
     """Class representing the social network"""
 
-    def __init__(self, dataset, graph = 'scale-free', print_graph = False):
+    def __init__(self, strategy = '', print_graph = False, id2voter = None, graph = None, dataset = None, graph_generation = None):
         """ Initialize the Social Network.
 
         Parameters:
-        dataset (Dataset): contains preference information
-        graph [str, dict(int, list(int))]: if str, specify a random graph generation strategy. Otherwise,
-                                            specify a graph (dict) consistent with the dataset.
+        strategy (str): generation strategy of the graph
         print_graph (bool): whether to print the graph just created """
 
-        # for every preference, create COUNTS number of voters
-        voter_id_count = 0
-        self.id2voter = dict()
-        for strict, count in zip(dataset.preferences, dataset.counts):
-            for _ in range(count):
-                # TODO: parametrize the indiff level
-                partial = PartialOrder.generate_from_strict(strict, random.choice([0, 0.2, 1]))
-                voter = Voter(partial, strict)
-                self.id2voter[voter_id_count] = voter
-                voter_id_count += 1
-
-        if isinstance(graph, str):
-            # generate this type of graph
-            self.graph = list(generate_graphs(num_voters=dataset.count_voters(), num_graphs=1, gtype=graph))[0]
-        elif isinstance(graph, dict):
+        if strategy == 'from_voter_graph':
+            assert isinstance(id2voter, dict) and isinstance(graph, dict)
+            assert id2voter.keys() == graph.keys()
+            self.id2voter = id2voter
             self.graph = nx.DiGraph(graph)
-            assert len(self.graph.nodes()) == dataset.count_voters(), "The passed graph is not consistent with the dataset."
+        elif strategy == 'dataset_and_random_edges':
+            # for every preference, create COUNTS number of voters
+            voter_id_count = 0
+            self.id2voter = dict()
+            for strict, count in zip(dataset.preferences, dataset.counts):
+                for _ in range(count):
+                    # TODO: parametrize the indiff level
+                    partial = PartialOrder.generate_from_strict(strict, random.choice([0, 0.2, 1]))
+                    voter = Voter(partial, strict)
+                    self.id2voter[voter_id_count] = voter
+                    voter_id_count += 1
+            self.graph = list(generate_graphs(num_voters=dataset.count_voters(), num_graphs=1, gtype=graph_generation))[0]
         else:
-            raise NotImplementedError("Graphs can be either a string (random generation strategy) or dictionaries.")
+            raise NotImplementedError("This graph-creation strategy does not exist.")
 
         if print_graph:
             nx.draw(self.graph)
@@ -213,15 +211,39 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--alternatives', type=int, default=4, help='Number of alternatives.')
-    parser.add_argument('--voters', type=int, default=3000, help='Number of voters.')
+    parser.add_argument('--voters', type=int, default=1000, help='Number of voters.')
     parser.add_argument('--experiments', type=int, default=500, help='Number of experiments.')
+    parser.add_argument('--experiment_type', type=str, default='random_graph', help='Which experiments?')
+    parser.add_argument('--graph_type', type=str, default='path', help='Type of graph to be generated')
+    parser.add_argument('--use_partial_regret', action='store_true', help='Use the alternative metric of partial regret instead.')
 
     args = parser.parse_args()
 
-    # create the SN
-    data = Dataset(source='random', rand_params=[args.alternatives, args.voters])
-    true_preferences, true_counts = data.preferences, data.counts
-    SN = SocialNetwork(data, graph = 'random', print_graph = True)
+    if args.experiment_type == 'random_graph':
+        data = Dataset(source='random', rand_params=[args.alternatives, args.voters])
+        true_preferences, true_counts = data.preferences, data.counts
+        SN = SocialNetwork(strategy = 'dataset_and_random_edges', dataset = data, graph_generation = args.graph_type, print_graph = True)
+
+    elif args.experiment_type == 'case_study_star':
+        # this is a simple case study where everyone is connected to a center
+        # everybody has a true strict order 1,2,3,4
+        # only the center knows it
+        center_voter = Voter(PartialOrder({1:[2,3,4], 2:[3,4], 3:[4], 4:[]}), [1,2,3,4])
+        id2voter = {0: center_voter}
+        graph = {0: []}
+        import itertools
+        for i, ll in enumerate(list(itertools.permutations([1, 2, 3, 4]))):
+            ll = list(ll)
+            if ll != [1,2,3,4]:
+                id2voter[i] = Voter(PartialOrder({1:[], 2:[], 3:[], 4:[]}), [1,2,3,4])
+                graph[i] = [0]
+
+        true_preferences = [voter.strict for voter in id2voter.values()]
+        true_counts = [1] * len(true_preferences)
+        SN = SocialNetwork(strategy = 'from_voter_graph', id2voter = id2voter, graph = graph)
+
+    else:
+        raise NotImplementedError('This experiment does not exist')
     
     # comparing direct and liquid
     for paradigm in ['direct', 'liquid']:
@@ -236,7 +258,7 @@ if __name__ == '__main__':
             # per every rule...
             for rule in VotingRules.rules:
                 # min == lexicographic rule
-                winner = VotingRules.elect(rule, true_preferences, true_counts, tiebreaking = min)
+                winner = VotingRules.elect(rule, SN_preferences, SN_counts, tiebreaking = min)
                 winners[winner] += 1
                 # note: if here we use SN_preferences, SN_counts we compute the regret
                 # on the "reported" ballots not the TRUE preferences.
@@ -244,13 +266,12 @@ if __name__ == '__main__':
                 # vastly outperform direct...
                 # TODO: investigate this!
 
-                # regular regret
-                regrets[rule].append(regret(winner, data.preferences, data.counts))
+                if args.use_partial_regret:
+                    regrets[rule].append(partial_regret(winner, SN.id2voter.values()))
+                else:
+                    regrets[rule].append(regret(winner, true_preferences, true_counts))
 
-                # partial regret
-                # regrets[rule].append(partial_regret(winner, SN.id2voter.values()))
-
-        print(f'## average regret of `{paradigm}` paradigm ##')
+        print(f"## average {'partial ' if args.use_partial_regret else ''}regret of `{paradigm}` paradigm ##")
         for rule, val in regrets.items():
             val = np.array(val)
             print(f'{rule}: {val.mean():.4f} (+-{val.std():.4f})')
