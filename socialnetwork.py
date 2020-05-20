@@ -37,7 +37,7 @@ class SocialNetwork:
             raise NotImplementedError("This graph-creation strategy does not exist.")
 
         if print_graph:
-            nx.draw(self.graph)
+            nx.draw(self.graph, with_labels=True, font_weight='bold')
             plt.show()
 
     def getNeighbours(self, voter_id):
