@@ -9,7 +9,7 @@ import matplotlib.pyplot as plt
 class SocialNetwork:
     """Class representing the social network"""
 
-    def __init__(self, strategy = '', print_graph = False, id2voter = None, graph = None, dataset = None, graph_generation = None):
+    def __init__(self, strategy = '', print_graph = False, id2voter = None, graph = None, dataset = None, graph_generation = None, graph_seed = None):
         """ Initialize the Social Network.
 
         Parameters:
@@ -32,7 +32,7 @@ class SocialNetwork:
                     voter = Voter(partial, strict)
                     self.id2voter[voter_id_count] = voter
                     voter_id_count += 1
-            self.graph = list(generate_graphs(num_voters=dataset.count_voters(), num_graphs=1, gtype=graph_generation))[0]
+            self.graph = list(generate_graphs(num_voters=dataset.count_voters(), num_graphs=1, gtype=graph_generation, seed = graph_seed))[0]
         else:
             raise NotImplementedError("This graph-creation strategy does not exist.")
 

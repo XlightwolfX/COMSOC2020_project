@@ -6,12 +6,17 @@ from utils import regret, partial_regret
 from collections import defaultdict
 from votingrules import VotingRules
 
+seed = 42
 def random_graph(args):
+    global seed
+
     from dataset import Dataset
 
     data = Dataset(source='random', rand_params=[args.alternatives, args.voters])
     true_preferences, true_counts = data.preferences, data.counts
-    SN = SocialNetwork(strategy = 'dataset_and_random_edges', dataset = data, graph_generation = args.graph_type, print_graph = args.print_graph)
+    SN = SocialNetwork(strategy = 'dataset_and_random_edges', dataset = data, graph_generation = args.graph_type, graph_seed = seed, print_graph = args.print_graph)
+
+    seed += 1
 
     return SN, true_preferences, true_counts
 
