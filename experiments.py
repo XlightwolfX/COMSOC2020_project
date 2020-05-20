@@ -99,7 +99,7 @@ if __name__ == '__main__':
         raise Exception(f"Experiment {args.experiment_type} does not exist. Possible experiments: {list(experiments.keys())}")
 
     # comparing direct and liquid
-    for paradigm in ['direct', 'liquid']:
+    for paradigm in ['proxy', 'direct', 'liquid']:
         # datastructure used to compute avg regret and distribution of winners
         regrets = defaultdict(lambda : [])
         winners = defaultdict(lambda : 0)
