@@ -42,6 +42,7 @@ def typed_graph(args):
     import random
     from voter import Voter
     from partialorders import PartialOrder
+    from voter_type import VoterTypes
 
     def voter_type(i):
         return [1,2,3,4] if i % 2 == 0 else ([2,1,3,4] if i % 3 == 0 else [3,1,2,4])
@@ -51,10 +52,12 @@ def typed_graph(args):
 
     N = args.voters
 
+    gen_normal = VoterTypes(3)
     # generate a graph where the voters have two types
     id2voter = dict()
     for i in range(N):
-        strict = voter_type(i)
+        # strict = voter_type(i)
+        strict = gen_normal.generate()
         # second parameter is indecisivness, i put these arbitrary probabilities
         partial = PartialOrder.generate_from_strict(strict, random.choice([0] + [0.2] * 2 + [1] * 7))
         voter = Voter(partial, strict)
@@ -109,7 +112,7 @@ if __name__ == '__main__':
             SN, true_preferences, true_counts = experiment(args)
 
             # run the delegation mechanism, assign a preference to everybody a count the ballots
-            SN_preferences, SN_counts = SN.get_preferences(paradigm, 
+            SN_preferences, SN_counts = SN.get_preferences(paradigm,
                 print_delegations = args.print_delegations, print_preferences = args.print_preferences)
 
             # per every rule...
