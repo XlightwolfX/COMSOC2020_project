@@ -53,9 +53,13 @@ class PartialOrder:
                 ll.remove(a)
                 partial[a] = list(ll)
 
-        self.partial = partial
+        # MAKE IT TRANSITIVE
+        G = nx.algorithms.dag.transitive_closure(nx.DiGraph(partial))
+        self.partial = {n:list(G.successors(n)) for n in G.nodes()}
         # will be populated at the first call of get_strict_orders
         self._strict_orders = None
+
+        self.edges = {(i, j) for i in self.partial.keys() for j in self.partial[i]}
 
         # max number of strict orders with this alternatives: will be used in a function
         factorial = lambda n : 1 if n <= 1 else n * factorial(n-1)
@@ -90,19 +94,10 @@ class PartialOrder:
         Returns:
         (bool): the verdict"""
 
-        # get transitive closure of the two orders (this can be seen as a "normalization": all preferences are representend)
-
-        my_transitive_closure = nx.algorithms.dag.transitive_closure(nx.DiGraph(self.partial))
-        other_transitive_closure = nx.algorithms.dag.transitive_closure(nx.DiGraph(other.partial))
-
-        # get the edges
-
-        my_edges = set(my_transitive_closure.edges())
-        other_edges = set(other_transitive_closure.edges())
-
+        # note: everything is transitive
         # check whether it is a superset
 
-        return my_edges != other_edges and my_edges.issuperset(other_edges)
+        return self.edges != other.edges and self.edges.issuperset(other.edges)
 
 
     # this might not be a good score
