@@ -16,8 +16,7 @@ def partial_regret(winner, voters):
     p_regret = []
 
     for voter in voters:
-        transitive_closure = nx.algorithms.dag.transitive_closure(nx.DiGraph(voter.partial.partial))
-        p_regret.append(sum((1 for i, j in transitive_closure.edges() if j == winner)))
+        p_regret.append(sum((1 for i, j in voter.partial.edges if j == winner)))
 
     return sum(p_regret) * 1. / len(p_regret)
 
