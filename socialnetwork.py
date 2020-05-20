@@ -86,7 +86,36 @@ class SocialNetwork:
             for voter_id in self.id2voter.keys():
                 delegations[voter_id] = None
         elif paradigm == 'proxy':
-            raise NotImplementedError("Proxy voting not yet available")
+            # first round: pick decisive voters
+            for voter_id, voter in self.id2voter.items():
+                if len(voter.partial.get_strict_orders()) == 1:
+                    delegations[voter_id] = None
+
+            # second round: indecisive voters find guru to delegate, or vote randomly
+            for voter_id, voter in self.id2voter.items():
+                assert voter_id >= 0, 'voter id must be positive'
+                try:
+                    # skip decisive voters that vote already
+                    if delegations[voter_id] == None:
+                        continue
+                except KeyError:
+                    # get its neighbours' ids
+                    neighbours_id = self.getNeighbours(voter_id)
+                    # and the neighbours themselves
+                    neighbours = [self.id2voter[neighbour_id] for neighbour_id in neighbours_id]
+                    # get viable delegations
+                    delegation = voter.delegate(neighbours_id, neighbours)
+                    # if no delegation is available we do not delegate
+                    if len(delegation) == 0:
+                        # use a '-1' placeholder; switch for None afterwards
+                        delegation = -1
+                    else:
+                        delegation = self._filter_delegations(delegation, delegations)
+                        delegation = random.choice(delegation)
+                    delegations[voter_id] = delegation
+
+            delegations = {i: None if j == -1 else j for i, j in delegations.items()}
+
         else:
             raise NotImplementedError("This delegation strategy does not exist.")
 
@@ -144,6 +173,32 @@ class SocialNetwork:
             next_vote = self._retrieve_vote(delegations[voter_id], votes, delegations)
             votes[voter_id] = next_vote
             return next_vote
+
+    def _filter_delegations(self, d, delegations):
+        """ Take a list of possible delegations and filter out voters that
+        do not vote themselves (for proxy voting)
+
+        Parameters:
+        d list(int): list of possible delegations for particular voter
+        delegations dict(int, [int, NoneType]): delegation mapping
+
+        Returns:
+        list(int)"""
+
+        filt_d = []
+        for voter in d:
+            try:
+                # add a voter id iff the voter declared to vote in 1st round
+                if delegations[voter] == None:
+                    filt_d.append(voter)
+            except:
+                # voter has no declared delegation decision=> he did not choose to vote in 1st round
+                pass
+        # iff there is nobody to delegate to, use the proxy-voting placeholder
+        if len(filt_d) == 0:
+            filt_d.append(-1)
+
+        return filt_d
 
     def get_preferences(self, paradigm = 'liquid', print_delegations = False, print_preferences = False):
         """ Return the preference list of the social network. This function 
