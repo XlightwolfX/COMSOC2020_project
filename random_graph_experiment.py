@@ -124,4 +124,4 @@ if __name__ == '__main__':
                 if args.use_partial_regret:
                     regs = regrets[graph_type][paradigm][rule]
                     print(f'avg partial regret of {graph_type}, {rule}, {paradigm}: {np.mean(regs):.4f} (+- {np.std(regs):.4f})')
-        print("#######")
+            print("#######")
