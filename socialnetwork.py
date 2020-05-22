@@ -9,6 +9,20 @@ import matplotlib.pyplot as plt
 class SocialNetwork:
     """Class representing the social network"""
 
+    @classmethod
+    def _convert_dataset_into_id2voter(cls, dataset):
+        """ Convert a Dataset object into a id2voter """
+        voter_id_count = 0
+        id2voter = dict()
+        for strict, count in zip(dataset.preferences, dataset.counts):
+            for _ in range(count):
+                # TODO: parametrize the indiff level!!
+                partial = PartialOrder.generate_from_strict(strict, random.choice([0, 0.2, 1]))
+                voter = Voter(partial, strict)
+                id2voter[voter_id_count] = voter
+                voter_id_count += 1
+        return id2voter
+
     def __init__(self, strategy = '', print_graph = False, id2voter = None, graph = None, dataset = None, graph_generation = None, graph_seed = None):
         """ Initialize the Social Network.
 
@@ -21,18 +35,16 @@ class SocialNetwork:
             assert id2voter.keys() == graph.keys()
             self.id2voter = id2voter
             self.graph = nx.DiGraph(graph)
+
+        elif strategy == 'dataset_and_nx_graph':
+            assert isinstance(graph, nx.DiGraph), "Under dataset_and_nx_graph strategy, graph parameter must be a networkx.DiGraph"
+            self.id2voter = SocialNetwork._convert_dataset_into_id2voter(dataset)
+            self.graph = graph
+
         elif strategy == 'dataset_and_random_edges':
-            # for every preference, create COUNTS number of voters
-            voter_id_count = 0
-            self.id2voter = dict()
-            for strict, count in zip(dataset.preferences, dataset.counts):
-                for _ in range(count):
-                    # TODO: parametrize the indiff level!!
-                    partial = PartialOrder.generate_from_strict(strict, random.choice([0, 0.2, 1]))
-                    voter = Voter(partial, strict)
-                    self.id2voter[voter_id_count] = voter
-                    voter_id_count += 1
+            self.id2voter = SocialNetwork._convert_dataset_into_id2voter(dataset)
             self.graph = list(generate_graphs(num_voters=dataset.count_voters(), num_graphs=1, gtype=graph_generation, seed = graph_seed))[0]
+            
         else:
             raise NotImplementedError("This graph-creation strategy does not exist.")
 
