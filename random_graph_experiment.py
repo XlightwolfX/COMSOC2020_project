@@ -117,10 +117,11 @@ if __name__ == '__main__':
 
     # print result
     for graph_type in graph_types:
-        for paradigm in paradigms:
-            for rule in VotingRules.rules:
+        for rule in VotingRules.rules:
+            for paradigm in paradigms:
                 regs = regrets[graph_type][paradigm][rule]
-                print(f'avg regret of {graph_type}, {paradigm}, {rule}: {np.mean(regs):.4f} (+- {np.std(regs):.4f})')
+                print(f'avg regret of {graph_type}, {rule}, {paradigm}: {np.mean(regs):.4f} (+- {np.std(regs):.4f})')
                 if args.use_partial_regret:
                     regs = regrets[graph_type][paradigm][rule]
-                    print(f'avg partial regret of {graph_type}, {paradigm}, {rule}: {np.mean(regs):.4f} (+- {np.std(regs):.4f})')
+                    print(f'avg partial regret of {graph_type}, {rule}, {paradigm}: {np.mean(regs):.4f} (+- {np.std(regs):.4f})')
+        print("#######")
