@@ -8,11 +8,12 @@ from votingrules import VotingRules
 from dataset import Dataset
 from networks import generate_graphs
 import random
+from scipy.stats import ttest_ind
 
 # since every graph type has diff. parameter spaces,
 # I have created this wrapper that returns a generator
 # of parameters, given a graph type name.
-def get_param_iterator(graph_type):
+def param_generator(graph_type):
     degrees = [4, 8, 12, 16, 20, 24]
     probs = [0.25, 0.5, 0.75]
     clique_sizes = [10, 20, 50]
@@ -35,36 +36,45 @@ def get_param_iterator(graph_type):
     else:
         raise NotImplementedError()
 
-    return iter(param_iterator)
-
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser()
     parser.add_argument('--seed', type=int, default=42, help='Random seed')
     parser.add_argument('--alternatives', type=int, default=4, help='Number of alternatives.')
     parser.add_argument('--voters', type=int, default=100, help='Number of voters.')
+    parser.add_argument('--voters_source', type=str, default='random', help='How to generate voters')
+    parser.add_argument('--dataset_path', type=str, default='dataset/ED-00004-00000001.soc', help="If using preflib, which dataset?")
     parser.add_argument('--experiments', type=int, default=100, help='Number of experiments.')
     parser.add_argument('--graphs_per_setting', type=int, default=25, help='How many graphs to generate per param settings')
     parser.add_argument('--print_graph', action='store_true', help='Print the generated graph')
     parser.add_argument('--print_delegations', action='store_true', help='Print the delegation chains')
     parser.add_argument('--print_preferences', action='store_true', help='Print the preference counts')
-    parser.add_argument('--use_partial_regret', action='store_true', help='Use the alternative metric of partial regret instead.')
+    parser.add_argument('--skip_partial_regret', action='store_true', help='Don\'t use the alternative metric of partial regret instead.')    
 
     args = parser.parse_args()
 
     random.seed(args.seed)
+
 
     graph_types = ['path', 'random', 'regular', 'scale-free', 'small-world', 'caveman']
     paradigms = ['direct', 'proxy', 'liquid']
 
     # TODO: parametrize data source to use other means, for instance voter types.
     # TODO move this inside loop?
-    data = Dataset(source='random', rand_params=[args.alternatives, args.voters])
-    true_preferences, true_counts = data.preferences, data.counts
+    if args.voters_source == 'random':
+        data = Dataset(source='random', rand_params=[args.alternatives, args.voters])
+        true_preferences, true_counts = data.preferences, data.counts
+    elif args.voters_source == 'preflib':
+        data = Dataset(source=args.dataset_path)
+        true_preferences, true_counts = data.preferences, data.counts
+    elif args.voters_source == 'types':
+        raise NotImplementedError('types experiment not implemented yet')
+    else:
+        raise NotImplementedError()
 
     # for regret, we need a three level structure: graph type, paradigm and rule.
     regrets = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : [])))
-    if args.use_partial_regret:
+    if not args.skip_partial_regret:
         partial_regrets = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : [])))
 
     # this is used for the progress bar. First, we need to compute the total number
@@ -72,7 +82,7 @@ if __name__ == '__main__':
     # their number explicitly
     COUNT_GRAPH_SETTINGS = 0
     for graph_type in graph_types:
-        for param in get_param_iterator(graph_type):
+        for param in param_generator(graph_type):
             COUNT_GRAPH_SETTINGS += 1
 
     # Now, total number of steps:
@@ -85,7 +95,7 @@ if __name__ == '__main__':
         for graph_type in graph_types:
 
             # for all parameters settings of this graph
-            for params in get_param_iterator(graph_type):
+            for params in param_generator(graph_type):
 
                 # generate some graphs with this parameters
                 graph_generator = generate_graphs(num_voters=data.count_voters(), \
@@ -110,7 +120,7 @@ if __name__ == '__main__':
                                 winner = VotingRules.elect(rule, SN_preferences, SN_counts, tiebreaking = min)
 
                                 regrets[graph_type][paradigm][rule].append(regret(winner, true_preferences, true_counts))
-                                if args.use_partial_regret:
+                                if not args.skip_partial_regret:
                                     partial_regrets[graph_type][paradigm][rule].append(partial_regret(winner, SN.id2voter.values()))
 
                                 # update the progress bar
@@ -119,17 +129,39 @@ if __name__ == '__main__':
     # TODO: visualize each different graph setting differently?
 
     # print result
-    for graph_type in graph_types:
-        for rule in VotingRules.rules:
-            for paradigm in paradigms:
-                regs = regrets[graph_type][paradigm][rule]
-                print(f'avg regret of {graph_type}, {rule}, {paradigm}: {np.mean(regs):.4f} (+- {np.std(regs):.4f})')
-            print("#######")
-    if args.use_partial_regret:
-        print("*********")
+    def print_results(data, name = 'regret'):
+        # by default, we say it is not passed
+        t_tests = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : 'FAILED'))))
         for graph_type in graph_types:
             for rule in VotingRules.rules:
                 for paradigm in paradigms:
-                    regs = partial_regrets[graph_type][paradigm][rule]
-                    print(f'avg partial regret of {graph_type}, {rule}, {paradigm}: {np.mean(regs):.4f} (+- {np.std(regs):.4f})')
+                    # data
+                    regs = data[graph_type][paradigm][rule]
+                    print(f'avg {name} {graph_type}, {rule}, {paradigm}: {np.mean(regs):.4f} (+- {np.std(regs):.4f})')
+                    # t test
+                    for other in paradigms:
+                        if other != paradigm:
+                            data1 = data[graph_type][paradigm][rule]
+                            data2 = data[graph_type][other][rule]
+                            stat, p = ttest_ind(data1, data2)
+                            if p <= 0.05:
+                                t_tests[graph_type][paradigm][other][rule] = 'PASSED'
                 print("#######")
+
+        print("######### T-TESTS ###########")
+        for graph_type in graph_types:
+            for rule in VotingRules.rules:
+                for paradigm in paradigms:
+                    # basically, exclude one paradigm and look at the other two
+                    # this is a quick way to generate all the combinations without repetition
+                    others_two = list(set(paradigms) - {paradigm})
+                    print(f"{graph_type}, {rule}, {others_two[0]}/{others_two[1]}: {t_tests[graph_type][others_two[0]][others_two[1]][rule]}")
+            print('##')
+
+        print("*********")
+
+
+
+    print_results(regrets)
+    if not args.skip_partial_regret:
+        print_results(partial_regrets, name = 'partial regret')
