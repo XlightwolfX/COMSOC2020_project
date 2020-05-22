@@ -7,7 +7,7 @@ from collections import defaultdict
 from votingrules import VotingRules
 from dataset import Dataset
 from networks import generate_graphs
-# ^ remove unused
+import random
 
 # since every graph type has diff. parameter spaces,
 # I have created this wrapper that returns a generator
@@ -52,10 +52,13 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
+    random.seed(args.seed)
+
     graph_types = ['path', 'random', 'regular', 'scale-free', 'small-world', 'caveman']
     paradigms = ['direct', 'proxy', 'liquid']
 
     # TODO: parametrize data source to use other means, for instance voter types.
+    # TODO move this inside loop?
     data = Dataset(source='random', rand_params=[args.alternatives, args.voters])
     true_preferences, true_counts = data.preferences, data.counts
 
@@ -121,7 +124,12 @@ if __name__ == '__main__':
             for paradigm in paradigms:
                 regs = regrets[graph_type][paradigm][rule]
                 print(f'avg regret of {graph_type}, {rule}, {paradigm}: {np.mean(regs):.4f} (+- {np.std(regs):.4f})')
-                if args.use_partial_regret:
-                    regs = regrets[graph_type][paradigm][rule]
-                    print(f'avg partial regret of {graph_type}, {rule}, {paradigm}: {np.mean(regs):.4f} (+- {np.std(regs):.4f})')
             print("#######")
+    if args.use_partial_regret:
+        print("*********")
+        for graph_type in graph_types:
+            for rule in VotingRules.rules:
+                for paradigm in paradigms:
+                    regs = partial_regrets[graph_type][paradigm][rule]
+                    print(f'avg partial regret of {graph_type}, {rule}, {paradigm}: {np.mean(regs):.4f} (+- {np.std(regs):.4f})')
+                print("#######")
