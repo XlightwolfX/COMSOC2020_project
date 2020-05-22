@@ -14,9 +14,8 @@ from scipy.stats import ttest_ind
 # I have created this wrapper that returns a generator
 # of parameters, given a graph type name.
 def param_generator(graph_type):
-    degrees = [4, 8, 12, 16, 20, 24]
+    degrees = [4, 8, 12, 16]
     probs = [0.25, 0.5, 0.75]
-    clique_sizes = [10, 20, 50]
 
     if graph_type in ('path', 'scale-free'):
         return (dict() for _ in range(1))
@@ -25,13 +24,15 @@ def param_generator(graph_type):
         return ({'prob': prob} for prob in probs)
 
     elif graph_type == 'regular':
-        return ({'degree': degree} for degree in degrees)
+        return ({'degree': degree} for degree in degrees)     
 
     elif graph_type == 'small-world':
-        return ({'degree': degree, 'prob': prob} for degree, prob in zip(degrees, probs))
+        def param_generator():
+            for degree in degrees:
+                for prob in probs:
+                    yield {'degree': degree, 'prob': prob}
 
-    elif graph_type == 'caveman':
-        return ({'clique_size': clique_size} for clique_size in clique_sizes)        
+        return param_generator()
 
     else:
         raise NotImplementedError()
@@ -56,10 +57,9 @@ if __name__ == '__main__':
     random.seed(args.seed)
 
 
-    graph_types = ['path', 'random', 'regular', 'scale-free', 'small-world', 'caveman']
+    graph_types = ['path', 'random', 'regular', 'scale-free', 'small-world']
     paradigms = ['direct', 'proxy', 'liquid']
 
-    # TODO: parametrize data source to use other means, for instance voter types.
     # TODO move this inside loop?
     if args.voters_source == 'random':
         data = Dataset(source='random', rand_params=[args.alternatives, args.voters])
@@ -74,6 +74,7 @@ if __name__ == '__main__':
 
     # for regret, we need a three level structure: graph type, paradigm and rule.
     regrets = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : [])))
+    winners = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : 0))))
     if not args.skip_partial_regret:
         partial_regrets = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : [])))
 
@@ -105,7 +106,7 @@ if __name__ == '__main__':
                 for graph in graph_generator:
 
                     # get the corresponding SN
-                    SN = SocialNetwork(strategy = 'dataset_and_nx_graph', graph = graph, dataset = data)
+                    SN = SocialNetwork(strategy = 'dataset_and_nx_graph', graph = graph, dataset = data, print_graph = args.print_graph)
                     # and compare it under every paradigm
                     for paradigm in paradigms:
 
@@ -123,13 +124,15 @@ if __name__ == '__main__':
                                 if not args.skip_partial_regret:
                                     partial_regrets[graph_type][paradigm][rule].append(partial_regret(winner, SN.id2voter.values()))
 
+                                winners[graph_type][paradigm][rule][winner] += 1
+
                                 # update the progress bar
                                 pbar.update(1)
 
     # TODO: visualize each different graph setting differently?
 
     # print result
-    def print_results(data, name = 'regret'):
+    def print_results(data, name = 'regret', print_winners = True):
         # by default, we say it is not passed
         t_tests = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : 'FAILED'))))
         for graph_type in graph_types:
@@ -138,6 +141,8 @@ if __name__ == '__main__':
                     # data
                     regs = data[graph_type][paradigm][rule]
                     print(f'avg {name} {graph_type}, {rule}, {paradigm}: {np.mean(regs):.4f} (+- {np.std(regs):.4f})')
+                    if print_winners:
+                        print(', '.join([f'{w} won {c} times' for w, c in sorted(dict(winners[graph_type][paradigm][rule]).items())]))
                     # t test
                     for other in paradigms:
                         if other != paradigm:
@@ -164,4 +169,4 @@ if __name__ == '__main__':
 
     print_results(regrets)
     if not args.skip_partial_regret:
-        print_results(partial_regrets, name = 'partial regret')
+        print_results(partial_regrets, name = 'partial regret', print_winners = False)
