@@ -19,7 +19,7 @@ def generate_graphs(num_voters, num_graphs, gtype='scale-free', seed=42, params 
         of clique_size size. Values passed: num_voters={num_voters}, clique_size={params['clique_size']}"
 
     gtypes = {
-        'scale-free': lambda : nx.DiGraph(nx.scale_free_graph(num_voters, seed=seed)),
+        'scale-free': lambda : nx.DiGraph(nx.generators.random_graphs.barabasi_albert_graph(num_voters, 1, seed)),
         'path': lambda : nx.DiGraph((nx.generators.classic.path_graph(num_voters, create_using = nx.classes.multidigraph.MultiDiGraph))),
         'random': lambda : random_network(num_voters, params['prob'], seed = seed),
         'regular' : lambda : nx.to_directed(nx.generators.random_graphs.random_regular_graph(params['degree'], num_voters, seed)),
