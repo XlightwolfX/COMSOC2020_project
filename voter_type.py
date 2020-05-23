@@ -28,7 +28,7 @@ class VoterTypes:
             preference_profiles = [list(eval(x[2:].strip('\n'))) for x in raw[13:]]
 
         four_alternatives = list(np.random.choice(range(1, num_alternatives + 1), 4, replace=False))
-        a_map = {a: i for i, a in enumerate(four_alternatives)}
+        a_map = {a: i + 1 for i, a in enumerate(four_alternatives)}
         self._preference_profiles = [[a_map[a] for a in pref if a in a_map] for pref in preference_profiles]
 
     def _tshirt_generator(self):

@@ -57,7 +57,7 @@ def typed_graph(args):
 
     N = args.voters
 
-    gen_normal = VoterTypes(3)
+    gen_normal = VoterTypes(2)
     # generate a graph where the voters have two types
     id2voter = dict()
     for i in range(N):
@@ -65,6 +65,7 @@ def typed_graph(args):
         strict = gen_normal.generate()
         # second parameter is indecisivness, i put these arbitrary probabilities
         partial = PartialOrder.generate_from_strict(strict, random.choice([0] + [0.2] * 2 + [1] * 7))
+        # partial = PartialOrder.generate_from_strict(strict, np.random.choice(indecisivness, p=ps))
         voter = Voter(partial, strict)
         id2voter[i] = voter
 
