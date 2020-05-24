@@ -2,7 +2,7 @@ from socialnetwork import SocialNetwork
 import argparse
 import numpy as np
 from tqdm import tqdm
-from utils import regret, partial_regret
+from utils import regret, partial_regret, ind_levels
 from collections import defaultdict
 from votingrules import VotingRules
 from dataset import Dataset
@@ -51,12 +51,12 @@ if __name__ == '__main__':
     parser.add_argument('--print_delegations', action='store_true', help='Print the delegation chains')
     parser.add_argument('--print_preferences', action='store_true', help='Print the preference counts')
     parser.add_argument('--print_winners', action='store_true', help='Print the winner counts')
-    parser.add_argument('--skip_partial_regret', action='store_true', help='Don\'t use the alternative metric of partial regret instead.')    
+    parser.add_argument('--partial_regret', action='store_true', help='Use also the alternative metric of partial regret.')    
+    parser.add_argument('--ttest', action='store_true', help='Perform t-test')    
 
     args = parser.parse_args()
 
     random.seed(args.seed)
-
 
     graph_types = ['path', 'random', 'regular', 'scale-free', 'small-world']
     paradigms = ['direct', 'proxy', 'liquid']
@@ -76,7 +76,7 @@ if __name__ == '__main__':
     # for regret, we need a three level structure: graph type, paradigm and rule.
     regrets = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : [])))
     winners = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : 0))))
-    if not args.skip_partial_regret:
+    if args.partial_regret:
         partial_regrets = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : [])))
 
     # this is used for the progress bar. First, we need to compute the total number
@@ -89,6 +89,8 @@ if __name__ == '__main__':
 
     # Now, total number of steps:
     TOT_EXPERIMENTS = COUNT_GRAPH_SETTINGS * args.graphs_per_setting * args.experiments * len(paradigms) * len(VotingRules.rules)
+
+    possible_indecision_levels = ind_levels(args.alternatives)
 
     # progress bar
     with tqdm(total=TOT_EXPERIMENTS) as pbar:
@@ -107,7 +109,9 @@ if __name__ == '__main__':
                 for graph in graph_generator:
 
                     # get the corresponding SN
-                    SN = SocialNetwork(strategy = 'dataset_and_nx_graph', graph = graph, dataset = data, print_graph = args.print_graph)
+                    SN = SocialNetwork(strategy = 'dataset_and_nx_graph', possible_indecision_levels = possible_indecision_levels, \
+                        graph = graph, dataset = data, print_graph = args.print_graph)
+
                     # and compare it under every paradigm
                     for paradigm in paradigms:
 
@@ -119,10 +123,11 @@ if __name__ == '__main__':
 
                             # and get the winner for every rule
                             for rule in VotingRules.rules:
-                                winner = VotingRules.elect(rule, SN_preferences, SN_counts, tiebreaking = min)
+                                # this corresponds to random tie breaking
+                                winner = VotingRules.elect(rule, SN_preferences, SN_counts, tiebreaking = lambda winners : random.choice(list(winners)))
 
                                 regrets[graph_type][paradigm][rule].append(regret(winner, true_preferences, true_counts))
-                                if not args.skip_partial_regret:
+                                if args.partial_regret:
                                     partial_regrets[graph_type][paradigm][rule].append(partial_regret(winner, SN.id2voter.values()))
 
                                 winners[graph_type][paradigm][rule][winner] += 1
@@ -154,20 +159,21 @@ if __name__ == '__main__':
                                 t_tests[graph_type][paradigm][other][rule] = 'PASSED'
                 print("#######")
 
-        print("######### T-TESTS ###########")
-        for graph_type in graph_types:
-            for rule in VotingRules.rules:
-                for paradigm in paradigms:
-                    # basically, exclude one paradigm and look at the other two
-                    # this is a quick way to generate all the combinations without repetition
-                    others_two = list(set(paradigms) - {paradigm})
-                    print(f"{graph_type}, {rule}, {others_two[0]}/{others_two[1]}: {t_tests[graph_type][others_two[0]][others_two[1]][rule]}")
-            print('##')
+        if args.ttest:
+            print("######### T-TESTS ###########")
+            for graph_type in graph_types:
+                for rule in VotingRules.rules:
+                    for paradigm in paradigms:
+                        # basically, exclude one paradigm and look at the other two
+                        # this is a quick way to generate all the combinations without repetition
+                        others_two = list(set(paradigms) - {paradigm})
+                        print(f"{graph_type}, {rule}, {others_two[0]}/{others_two[1]}: {t_tests[graph_type][others_two[0]][others_two[1]][rule]}")
+                print('##')
 
         print("*********")
 
 
 
     print_results(regrets)
-    if not args.skip_partial_regret:
+    if args.partial_regret:
         print_results(partial_regrets, name = 'partial regret', print_winners = False)

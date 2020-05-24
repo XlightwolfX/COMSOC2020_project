@@ -10,20 +10,20 @@ class SocialNetwork:
     """Class representing the social network"""
 
     @classmethod
-    def _convert_dataset_into_id2voter(cls, dataset):
+    def _convert_dataset_into_id2voter(cls, dataset, possible_indecision_levels):
         """ Convert a Dataset object into a id2voter """
         voter_id_count = 0
         id2voter = dict()
         for strict, count in zip(dataset.preferences, dataset.counts):
             for _ in range(count):
                 # TODO: parametrize the indiff level!!
-                partial = PartialOrder.generate_from_strict(strict, random.choice([0, 0.2, 1]))
+                partial = PartialOrder.generate_from_strict(strict, random.choice(possible_indecision_levels))
                 voter = Voter(partial, strict)
                 id2voter[voter_id_count] = voter
                 voter_id_count += 1
         return id2voter
 
-    def __init__(self, strategy = '', print_graph = False, id2voter = None, graph = None, dataset = None, graph_generation = None, graph_seed = None):
+    def __init__(self, strategy = '', print_graph = False, possible_indecision_levels = None, id2voter = None, graph = None, dataset = None, graph_generation = None, graph_seed = None):
         """ Initialize the Social Network.
 
         Parameters:
@@ -38,11 +38,11 @@ class SocialNetwork:
 
         elif strategy == 'dataset_and_nx_graph':
             assert isinstance(graph, nx.DiGraph), "Under dataset_and_nx_graph strategy, graph parameter must be a networkx.DiGraph"
-            self.id2voter = SocialNetwork._convert_dataset_into_id2voter(dataset)
+            self.id2voter = SocialNetwork._convert_dataset_into_id2voter(dataset, possible_indecision_levels)
             self.graph = graph
 
         elif strategy == 'dataset_and_random_edges':
-            self.id2voter = SocialNetwork._convert_dataset_into_id2voter(dataset)
+            self.id2voter = SocialNetwork._convert_dataset_into_id2voter(dataset, possible_indecision_levels)
             self.graph = list(generate_graphs(num_voters=dataset.count_voters(), num_graphs=1, gtype=graph_generation, seed = graph_seed))[0]
             
         else:
