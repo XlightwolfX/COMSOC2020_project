@@ -12,7 +12,8 @@ class Dataset:
         self.preferences, self.counts, candidates = self._process_data(source, rand_params)
         self.candidates = set(range(1, candidates + 1))
 
-    def _is_int(self, s):
+    @staticmethod
+    def _is_int(s):
         """check if string is an int"""
         try:
             int(s)
