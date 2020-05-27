@@ -31,10 +31,10 @@ class SocialNetwork:
         print_graph (bool): whether to print the graph just created """
 
         if strategy == 'from_voter_graph':
-            assert isinstance(id2voter, dict) and isinstance(graph, dict)
+            assert isinstance(id2voter, dict) and (isinstance(graph, dict) or isinstance(graph, nx.DiGraph))
             assert id2voter.keys() == graph.keys()
             self.id2voter = id2voter
-            self.graph = nx.DiGraph(graph)
+            self.graph = nx.DiGraph(graph) if isinstance(graph, dict) else graph
 
         elif strategy == 'dataset_and_nx_graph':
             assert isinstance(graph, nx.DiGraph), "Under dataset_and_nx_graph strategy, graph parameter must be a networkx.DiGraph"
