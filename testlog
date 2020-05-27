@@ -6,7 +6,14 @@
     - hyperparam: random_graph_experiment.py --voter_source preflib --dataset_path dataset/4_condorcet.soc (rest is default)
   2) Caveman graph
     - If we assume that like-minded people are connected then liquid should be better
-    - hyperparam: caveman_experiment.py 
+    - hyperparam: caveman_experiment.py --num_cliques (6-24)? --clique_size (10-50)?
+  3) vary indifference levels and discuss differences
+    - Different indiff distributions produce very different results. Liquid performs better when there is more indecisive people.
+    - hyperparam: --indecisiveness 0 0.2 0.2 0.2 1 1 1 1 1 1 1 1 1
+                                 | 0 0.2 0.2 0.2 0.47 0.30 0.17 1 1 1 1 1 1
+                                 | 0 1
+                                 | 0
+                                 | 1
 
 
 -----------------------------------------------------------------
