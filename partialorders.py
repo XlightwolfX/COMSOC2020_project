@@ -20,7 +20,7 @@ class PartialOrder:
         # we begin by creating the partial order corresponding to our strict order.
         order = PartialOrder(strict)
         graph = dict(order.partial)
-        
+
         # then, we keep removing edges untill we reach the desired indecisivness
 
         while True:
@@ -97,7 +97,7 @@ class PartialOrder:
         # note: everything is transitive
         # check whether it is a superset
 
-        return self.edges != other.edges and self.edges.issuperset(other.edges)
+        return (self.edges != other.edges) and self.edges.issuperset(other.edges)
 
 
     # this might not be a good score
