@@ -6,7 +6,7 @@
     - hyperparam: random_graph_experiment.py --voter_source preflib --dataset_path dataset/4_condorcet.soc (rest is default)
   2) Caveman graph
     - If we assume that like-minded people are connected then liquid should be better
-    - hyperparam: 
+    - hyperparam: caveman_experiment.py 
 
 
 -----------------------------------------------------------------
