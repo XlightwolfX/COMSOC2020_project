@@ -47,7 +47,7 @@ if __name__ == "__main__":
     parser.add_argument('--num_cliques', type=int, default=6, help='Number of cliques.')
     parser.add_argument('--clique_size', type=int, default=30, help='clique size')
     parser.add_argument('--seed', type=int, default=42, help='rand seed')
-    parser.add_argument('--experiments', type=int, default=20, help='rand seed')
+    parser.add_argument('--experiments', type=int, default=100, help='rand seed')
     parser.add_argument('--indecisiveness', type=int, nargs='+', default=[0, 0.2, 0.2, 0.2, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         help="indecisiveness distribution")
     args = parser.parse_args()
@@ -71,41 +71,45 @@ if __name__ == "__main__":
     generator = VoterTypes(type_num, 'half_normal')
     possible_indecision_levels = args.indecisiveness
 
-    for _ in tqdm(range(args.experiments), leave=False):
-        id2voter = {}
-
-        random.shuffle(all_types)
-        type_list = all_types[:type_num]
-
-        for i in range(type_num):
-            t = type_list[i]
-            for j in range(i * args.clique_size,(i + 1) *  args.clique_size):
-                strict = generator.generate(list(t))
-                # strict = list(t)
-                partial = PartialOrder.generate_from_strict(strict, random.choice(possible_indecision_levels))
-                voter = Voter(partial, strict)
-                id2voter[j] = voter
-
-        SN = SocialNetwork(strategy='from_voter_graph', id2voter=id2voter, graph=graph)
-
-        true_preferences, true_counts = get_counts(id2voter)
+    with tqdm(total=args.experiments**2, leave=False) as pbar:
 
         for _ in range(args.experiments):
-            for paradigm in paradigms:
+            id2voter = {}
+
+            random.shuffle(all_types)
+            type_list = all_types[:type_num]
+
+            for i in range(type_num):
+                t = type_list[i]
+                for j in range(i * args.clique_size,(i + 1) *  args.clique_size):
+                    strict = generator.generate(list(t))
+                    # strict = list(t)
+                    partial = PartialOrder.generate_from_strict(strict, random.choice(possible_indecision_levels))
+                    voter = Voter(partial, strict)
+                    id2voter[j] = voter
+
+            SN = SocialNetwork(strategy='from_voter_graph', id2voter=id2voter, graph=graph)
+
+            true_preferences, true_counts = get_counts(id2voter)
+
+            for _ in range(args.experiments):
+                for paradigm in paradigms:
 
 
-                # get the preferences
-                SN_preferences, SN_counts = SN.get_preferences(paradigm)
+                    # get the preferences
+                    SN_preferences, SN_counts = SN.get_preferences(paradigm)
 
-                # and get the winner for every rule
-                for rule in VotingRules.rules:
-                    # this corresponds to random tie breaking
-                    winner = VotingRules.elect(rule, SN_preferences, SN_counts,
-                                               tiebreaking=lambda winners: random.choice(list(winners)))
+                    # and get the winner for every rule
+                    for rule in VotingRules.rules:
+                        # this corresponds to random tie breaking
+                        winner = VotingRules.elect(rule, SN_preferences, SN_counts,
+                                                   tiebreaking=lambda winners: random.choice(list(winners)))
 
-                    regrets[paradigm][rule].append(regret(winner, true_preferences, true_counts))
+                        regrets[paradigm][rule].append(regret(winner, true_preferences, true_counts))
 
-                    winners[paradigm][rule][winner] += 1
+                        winners[paradigm][rule][winner] += 1
+
+                pbar.update(1)
 
     for rule in VotingRules.rules:
         for paradigm in paradigms:

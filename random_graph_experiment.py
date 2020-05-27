@@ -99,7 +99,7 @@ if __name__ == '__main__':
     possible_indecision_levels = args.indecisiveness
 
     # progress bar
-    with tqdm(total=TOT_EXPERIMENTS) as pbar:
+    with tqdm(total=TOT_EXPERIMENTS, leave = False) as pbar:
         if args.voters_source == 'random':
             data = Dataset(source='random', rand_params=[args.alternatives, args.voters])
             true_preferences, true_counts = data.preferences, data.counts
