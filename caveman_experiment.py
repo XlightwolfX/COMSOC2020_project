@@ -48,7 +48,7 @@ if __name__ == "__main__":
     parser.add_argument('--clique_size', type=int, default=30, help='clique size')
     parser.add_argument('--seed', type=int, default=42, help='rand seed')
     parser.add_argument('--experiments', type=int, default=100, help='rand seed')
-    parser.add_argument('--indecisiveness', type=int, nargs='+', default=[0, 0.2, 0.2, 0.2, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    parser.add_argument('--indecisiveness', type=float, nargs='+', default=[0, 0.2, 0.2, 0.2, 1, 1, 1, 1, 1, 1, 1, 1, 1],
         help="indecisiveness distribution")
     args = parser.parse_args()
 

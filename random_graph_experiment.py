@@ -54,7 +54,7 @@ if __name__ == '__main__':
     parser.add_argument('--skip_print_winners', action='store_true', help='Skip the printing of the winner counts')
     parser.add_argument('--partial_regret', action='store_true', help='Use also the alternative metric of partial regret.')
     parser.add_argument('--ttest', action='store_true', help='Perform t-test')
-    parser.add_argument('--indecisiveness', type=int, nargs='+', default=[0, 0.2, 0.2, 0.2, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    parser.add_argument('--indecisiveness', type=float, nargs='+', default=[0, 0.2, 0.2, 0.2, 1, 1, 1, 1, 1, 1, 1, 1, 1],
                         help="indecisiveness distribution")
 
     args = parser.parse_args()
