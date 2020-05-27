@@ -52,9 +52,9 @@ if __name__ == '__main__':
     parser.add_argument('--print_graph', action='store_true', help='Print the generated graph')
     parser.add_argument('--print_delegations', action='store_true', help='Print the delegation chains')
     parser.add_argument('--print_preferences', action='store_true', help='Print the preference counts')
-    parser.add_argument('--print_winners', action='store_true', help='Print the winner counts')
+    parser.add_argument('--skip_print_winners', action='store_true', help='Skip the printing of the winner counts')
     parser.add_argument('--partial_regret', action='store_true', help='Use also the alternative metric of partial regret.')    
-    parser.add_argument('--ttest', action='store_true', help='Perform t-test')    
+    parser.add_argument('--ttest', action='store_true', help='Perform t-test')
 
     args = parser.parse_args()
 
@@ -151,7 +151,7 @@ if __name__ == '__main__':
                     # data
                     regs = data[graph_type][paradigm][rule]
                     print(f'avg {name} {graph_type}, {rule}, {paradigm}: {np.mean(regs):.4f} (+- {np.std(regs):.4f})')
-                    if args.print_winners and print_winners:
+                    if not args.skip_print_winners and print_winners:
                         print(', '.join([f'{w} won {c} times' for w, c in sorted(dict(winners[graph_type][paradigm][rule]).items())]))
                     # t test
                     for other in paradigms:
