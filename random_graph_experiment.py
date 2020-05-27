@@ -47,6 +47,8 @@ if __name__ == '__main__':
     parser.add_argument('--dataset_path', type=str, default='dataset/ED-00004-00000001.soc', help="If using preflib, which dataset?")
     parser.add_argument('--experiments', type=int, default=100, help='Number of experiments.')
     parser.add_argument('--graphs_per_setting', type=int, default=25, help='How many graphs to generate per param settings')
+    parser.add_argument('--voter_types', type=int, default=2, help='Number of types for \'types\' source')
+    parser.add_argument('--type_gen', type=str, default='half_normal', help='distribution for \'types\' source [half_normal|tshirt]')
     parser.add_argument('--print_graph', action='store_true', help='Print the generated graph')
     parser.add_argument('--print_delegations', action='store_true', help='Print the delegation chains')
     parser.add_argument('--print_preferences', action='store_true', help='Print the preference counts')
@@ -69,9 +71,11 @@ if __name__ == '__main__':
         data = Dataset(source=args.dataset_path)
         true_preferences, true_counts = data.preferences, data.counts
     elif args.voters_source == 'types':
-        raise NotImplementedError('types experiment not implemented yet')
+        data = Dataset(source='type_random', rand_params=[args.alternatives, args.voters, args.voter_types],
+                       type_generation=args.type_gen)
+        true_preferences, true_counts = data.preferences, data.counts
     else:
-        raise NotImplementedError()
+        raise NotImplementedError('Unknown voter source')
 
     # for regret, we need a three level structure: graph type, paradigm and rule.
     regrets = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : [])))

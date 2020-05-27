@@ -4,6 +4,7 @@ import numpy as np
 
 class VoterTypes:
     def __init__(self, num_types=2, gen_type='half_normal'):
+        """Create type generator object; interface - self.generate()"""
         self._gen_types = {
                             'half_normal': self._half_normal_generator,
                             'tshirt': self._tshirt_generator
@@ -59,3 +60,13 @@ class VoterTypes:
 
     def _half_normal_pdf(self, x, sigma=1):
         return (2**0.5 / (sigma * np.pi)) * np.exp(- (x**2 / (2 * sigma**2)))
+
+
+
+if __name__ == "__main__":
+    # Test
+    Types = VoterTypes(num_types=2, gen_type='half_normal')
+
+    x = Types.generate()
+
+    print(x)
