@@ -56,9 +56,7 @@ if __name__ == "__main__":
     paradigms = ['direct', 'proxy', 'liquid']
     type_num = args.num_cliques
 
-    type_list = list(map(lambda p : list(p) + [4], permutations((1,2,3))))
-
-    all_types = list(permutations([1,2,3,4]))[:type_num]
+    all_types = list(permutations([1,2,3,4]))
 
     regrets = defaultdict(lambda : defaultdict(lambda : []))
     winners = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : 0)))
@@ -78,7 +76,7 @@ if __name__ == "__main__":
 
             random.shuffle(all_types)
             type_list = all_types[:type_num]
-
+            
             for i in range(type_num):
                 t = type_list[i]
                 for j in range(i * args.clique_size,(i + 1) *  args.clique_size):
