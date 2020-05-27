@@ -46,10 +46,12 @@ class VoterTypes:
             if t not in self._types:
                 self._types.append(t)
 
-    def _half_normal_generator(self):
+    def _half_normal_generator(self, t=None):
         strict_order = []
         # pick one of the types randomly
-        t = self._types[np.random.randint(self._num_types)][:]
+
+        if type is None:
+            t = self._types[np.random.randint(self._num_types)][:]
 
         for i in range(4):
             distribution = self._hn_values[:4 - i] / sum(self._hn_values[:4 - i])

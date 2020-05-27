@@ -24,7 +24,7 @@ def param_generator(graph_type):
         return ({'prob': prob} for prob in probs)
 
     elif graph_type == 'regular':
-        return ({'degree': degree} for degree in degrees)     
+        return ({'degree': degree} for degree in degrees)
 
     elif graph_type == 'small-world':
         def param_generator():
@@ -38,7 +38,6 @@ def param_generator(graph_type):
         raise NotImplementedError()
 
 if __name__ == '__main__':
-
     parser = argparse.ArgumentParser()
     parser.add_argument('--seed', type=int, default=42, help='Random seed')
     parser.add_argument('--alternatives', type=int, default=4, help='Number of alternatives.')
@@ -53,7 +52,7 @@ if __name__ == '__main__':
     parser.add_argument('--print_delegations', action='store_true', help='Print the delegation chains')
     parser.add_argument('--print_preferences', action='store_true', help='Print the preference counts')
     parser.add_argument('--skip_print_winners', action='store_true', help='Skip the printing of the winner counts')
-    parser.add_argument('--partial_regret', action='store_true', help='Use also the alternative metric of partial regret.')    
+    parser.add_argument('--partial_regret', action='store_true', help='Use also the alternative metric of partial regret.')
     parser.add_argument('--ttest', action='store_true', help='Perform t-test')
 
     args = parser.parse_args()
@@ -64,18 +63,18 @@ if __name__ == '__main__':
     paradigms = ['direct', 'proxy', 'liquid']
 
     # TODO move this inside loop?
-    if args.voters_source == 'random':
-        data = Dataset(source='random', rand_params=[args.alternatives, args.voters])
-        true_preferences, true_counts = data.preferences, data.counts
-    elif args.voters_source == 'preflib':
-        data = Dataset(source=args.dataset_path)
-        true_preferences, true_counts = data.preferences, data.counts
-    elif args.voters_source == 'types':
-        data = Dataset(source='type_random', rand_params=[args.alternatives, args.voters, args.voter_types],
-                       type_generation=args.type_gen)
-        true_preferences, true_counts = data.preferences, data.counts
-    else:
-        raise NotImplementedError('Unknown voter source')
+    # if args.voters_source == 'random':
+    #     data = Dataset(source='random', rand_params=[args.alternatives, args.voters])
+    #     true_preferences, true_counts = data.preferences, data.counts
+    # elif args.voters_source == 'preflib':
+    #     data = Dataset(source=args.dataset_path)
+    #     true_preferences, true_counts = data.preferences, data.counts
+    # elif args.voters_source == 'types':
+    #     data = Dataset(source='type_random', rand_params=[args.alternatives, args.voters, args.voter_types],
+    #                    type_generation=args.type_gen)
+    #     true_preferences, true_counts = data.preferences, data.counts
+    # else:
+    #     raise NotImplementedError('Unknown voter source')
 
     # for regret, we need a three level structure: graph type, paradigm and rule.
     regrets = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : [])))
@@ -98,6 +97,18 @@ if __name__ == '__main__':
 
     # progress bar
     with tqdm(total=TOT_EXPERIMENTS) as pbar:
+        if args.voters_source == 'random':
+            data = Dataset(source='random', rand_params=[args.alternatives, args.voters])
+            true_preferences, true_counts = data.preferences, data.counts
+        elif args.voters_source == 'preflib':
+            data = Dataset(source=args.dataset_path)
+            true_preferences, true_counts = data.preferences, data.counts
+        elif args.voters_source == 'types':
+            data = Dataset(source='type_random', rand_params=[args.alternatives, args.voters, args.voter_types],
+                           type_generation=args.type_gen)
+            true_preferences, true_counts = data.preferences, data.counts
+        else:
+            raise NotImplementedError('Unknown voter source')
 
         # for all types of graphs
         for graph_type in graph_types:
