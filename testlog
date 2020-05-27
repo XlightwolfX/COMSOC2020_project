@@ -1,9 +1,12 @@
 -----------------------------------------------------------------
 - EXPERIMENTAL SETUPS TO RUN:
 
-  1) Condorcet loser
-    - 1 case: there is a clear Condorcet loser
-    - hyperparam: random_graph_experiment.py --voter_source preflib --dataset_path dataset/4_condorcet.soc (rest is default)
+  1) Do either:
+    1.a) Condorcet loser
+        - 1 case: there is a clear Condorcet loser
+        - hyperparam: random_graph_experiment.py --voter_source preflib --dataset_path dataset/4_condorcet.soc (rest is default)
+    1.b) Deterministic types
+
   2) Caveman graph
     - If we assume that like-minded people are connected then liquid should be better
     - hyperparam: caveman_experiment.py --num_cliques (6-24)? --clique_size (10-50)?
