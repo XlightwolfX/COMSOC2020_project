@@ -54,6 +54,8 @@ if __name__ == '__main__':
     parser.add_argument('--skip_print_winners', action='store_true', help='Skip the printing of the winner counts')
     parser.add_argument('--partial_regret', action='store_true', help='Use also the alternative metric of partial regret.')
     parser.add_argument('--ttest', action='store_true', help='Perform t-test')
+    parser.add_argument('--indecisiveness', type=int, nargs='+', default=[0, 0.2, 0.2, 0.2, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+                        help="indecisiveness distribution")
 
     args = parser.parse_args()
 
@@ -93,7 +95,8 @@ if __name__ == '__main__':
     # Now, total number of steps:
     TOT_EXPERIMENTS = COUNT_GRAPH_SETTINGS * args.graphs_per_setting * args.experiments * len(paradigms) * len(VotingRules.rules)
 
-    possible_indecision_levels = ind_levels(args.alternatives)
+    # possible_indecision_levels = ind_levels(args.alternatives)
+    possible_indecision_levels = args.indecisiveness
 
     # progress bar
     with tqdm(total=TOT_EXPERIMENTS) as pbar:

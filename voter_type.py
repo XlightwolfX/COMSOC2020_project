@@ -50,7 +50,7 @@ class VoterTypes:
         strict_order = []
         # pick one of the types randomly
 
-        if type is None:
+        if t is None:
             t = self._types[np.random.randint(self._num_types)][:]
 
         for i in range(4):

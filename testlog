@@ -1,3 +1,26 @@
+-----------------------------------------------------------------
+- EXPERIMENTAL SETUPS TO RUN:
+
+  1) Condorcet loser
+    - 1 case: there is a clear Condorcet loser
+    - hyperparam: random_graph_experiment.py --voter_source preflib --dataset_path dataset/4_condorcet.soc (rest is default)
+  2) Caveman graph
+    - If we assume that like-minded people are connected then liquid should be better
+    - hyperparam: 
+
+
+-----------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
 --voters_source random --print_winners --voters 100 --experiments 100 --graphs_per_setting 25
 
 avg regret path, plurality, direct: 1.4874 (+- 0.0553)
@@ -565,3 +588,35 @@ avg regret small-world, copeland, proxy: 0.2501 (+- 0.0071)
 avg regret small-world, copeland, liquid: 0.2500 (+- 0.0050)
 1 won 29997 times, 2 won 3 times
 #######
+*********
+
+
+
+/usr/bin/python3 /home/lightwolf/comsoc/COMSOC2020_project/caveman_experiment.py
+
+    parser.add_argument('--voters', type=int, default=100, help='Number of voters.')
+    parser.add_argument('--clique', type=int, default=25, help='clique size')
+    parser.add_argument('--seed', type=int, default=42, help='rand seed')
+    parser.add_argument('--experiments', type=int, default=100, help='rand seed')
+
+avg regret plurality, direct: 1.3343 (+- 0.5022)
+1 won 3026 times, 2 won 3237 times, 3 won 2304 times, 4 won 1433 times
+avg regret plurality, proxy: 1.0695 (+- 0.1440)
+1 won 4496 times, 2 won 4199 times, 3 won 1305 times
+avg regret plurality, liquid: 1.0693 (+- 0.1442)
+1 won 4507 times, 2 won 4177 times, 3 won 1316 times
+---------
+avg regret borda, direct: 1.2779 (+- 0.4358)
+1 won 3169 times, 2 won 3328 times, 3 won 2518 times, 4 won 985 times
+avg regret borda, proxy: 1.0789 (+- 0.1519)
+1 won 4325 times, 2 won 4283 times, 3 won 1392 times
+avg regret borda, liquid: 1.0795 (+- 0.1522)
+1 won 4329 times, 2 won 4263 times, 3 won 1408 times
+---------
+avg regret copeland, direct: 1.2868 (+- 0.4464)
+1 won 3161 times, 2 won 3309 times, 3 won 2481 times, 4 won 1049 times
+avg regret copeland, proxy: 1.0831 (+- 0.1489)
+1 won 4498 times, 2 won 4174 times, 3 won 1328 times
+avg regret copeland, liquid: 1.0835 (+- 0.1494)
+1 won 4451 times, 2 won 4214 times, 3 won 1335 times
+---------
