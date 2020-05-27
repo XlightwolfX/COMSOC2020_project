@@ -44,43 +44,42 @@ def get_counts(id2voter):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('--voters', type=int, default=100, help='Number of voters.')
-    parser.add_argument('--clique', type=int, default=25, help='clique size')
+    parser.add_argument('--num_cliques', type=int, default=6, help='Number of cliques.')
+    parser.add_argument('--clique_size', type=int, default=30, help='clique size')
     parser.add_argument('--seed', type=int, default=42, help='rand seed')
-    parser.add_argument('--experiments', type=int, default=100, help='rand seed')
+    parser.add_argument('--experiments', type=int, default=20, help='rand seed')
+    parser.add_argument('--indecisiveness', type=int, nargs='+', default=[0, 0.2, 0.2, 0.2, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+        help="indecisiveness distribution")
     args = parser.parse_args()
 
     random.seed(args.seed)
     paradigms = ['direct', 'proxy', 'liquid']
-    type_num = args.voters // args.clique
-    type_list = permutations([1,2,3,4])
+    type_num = args.num_cliques
 
-    # type_list = [
-    #     [1,2,3,4], [1,3,2,4], [2,1,3,4], [2,3,1,4]
-    # ]
+    type_list = list(map(lambda p : list(p) + [4], permutations((1,2,3))))
+
+    all_types = list(permutations([1,2,3,4]))[:type_num]
 
     regrets = defaultdict(lambda : defaultdict(lambda : []))
     winners = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : 0)))
 
-    graph = list(generate_graphs(args.voters, 1, 'caveman', args.seed, {'clique_size': args.clique}))[0]
+    graph = list(generate_graphs(args.num_cliques * args.clique_size, 1, 'caveman', args.seed, {'clique_size': args.clique_size}))[0]
 
     # nx.draw(graph, with_labels=True, font_weight='bold')
     # plt.show()
 
     generator = VoterTypes(type_num, 'half_normal')
-    pil = ind_levels(4)
-    # possible_indecision_levels = [0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
-    # possible_indecision_levels = [0, 1, 0.2]
-    possible_indecision_levels = [0, 0.2, 0.2, 0.2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
+    possible_indecision_levels = args.indecisiveness
 
-    print(pil)
-    exit()
     for _ in tqdm(range(args.experiments), leave=False):
         id2voter = {}
 
+        random.shuffle(all_types)
+        type_list = all_types[:type_num]
+
         for i in range(type_num):
             t = type_list[i]
-            for j in range(i * args.clique,(i + 1) *  args.clique):
+            for j in range(i * args.clique_size,(i + 1) *  args.clique_size):
                 strict = generator.generate(list(t))
                 # strict = list(t)
                 partial = PartialOrder.generate_from_strict(strict, random.choice(possible_indecision_levels))
