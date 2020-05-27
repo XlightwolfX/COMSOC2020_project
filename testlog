@@ -1,0 +1,543 @@
+--voters_source random --print_winners --voters 100 --experiments 100 --graphs_per_setting 25
+
+avg regret path, plurality, direct: 1.4874 (+- 0.0553)
+1 won 691 times, 2 won 865 times, 3 won 169 times, 4 won 775 times
+avg regret path, plurality, proxy: 1.4841 (+- 0.0547)
+1 won 755 times, 2 won 885 times, 3 won 57 times, 4 won 803 times
+avg regret path, plurality, liquid: 1.4811 (+- 0.0539)
+1 won 704 times, 2 won 994 times, 3 won 60 times, 4 won 742 times
+#######
+avg regret path, borda, direct: 1.4890 (+- 0.0548)
+1 won 708 times, 2 won 800 times, 3 won 370 times, 4 won 622 times
+avg regret path, borda, proxy: 1.4823 (+- 0.0524)
+1 won 932 times, 2 won 741 times, 3 won 286 times, 4 won 541 times
+avg regret path, borda, liquid: 1.4761 (+- 0.0499)
+1 won 978 times, 2 won 831 times, 3 won 242 times, 4 won 449 times
+#######
+avg regret path, copeland, direct: 1.4839 (+- 0.0530)
+1 won 854 times, 2 won 773 times, 3 won 347 times, 4 won 526 times
+avg regret path, copeland, proxy: 1.4784 (+- 0.0504)
+1 won 1037 times, 2 won 724 times, 3 won 305 times, 4 won 434 times
+avg regret path, copeland, liquid: 1.4725 (+- 0.0475)
+1 won 1075 times, 2 won 816 times, 3 won 254 times, 4 won 355 times
+#######
+avg regret random, plurality, direct: 1.4871 (+- 0.0546)
+1 won 2175 times, 2 won 2493 times, 3 won 870 times, 4 won 1962 times
+avg regret random, plurality, proxy: 1.4844 (+- 0.0541)
+1 won 2484 times, 2 won 2409 times, 3 won 469 times, 4 won 2138 times
+avg regret random, plurality, liquid: 1.4844 (+- 0.0540)
+1 won 2513 times, 2 won 2383 times, 3 won 470 times, 4 won 2134 times
+#######
+avg regret random, borda, direct: 1.4878 (+- 0.0537)
+1 won 2289 times, 2 won 2283 times, 3 won 1575 times, 4 won 1353 times
+avg regret random, borda, proxy: 1.4848 (+- 0.0528)
+1 won 2368 times, 2 won 2396 times, 3 won 1573 times, 4 won 1163 times
+avg regret random, borda, liquid: 1.4852 (+- 0.0529)
+1 won 2409 times, 2 won 2332 times, 3 won 1601 times, 4 won 1158 times
+#######
+avg regret random, copeland, direct: 1.4833 (+- 0.0523)
+1 won 2547 times, 2 won 2343 times, 3 won 1428 times, 4 won 1182 times
+avg regret random, copeland, proxy: 1.4783 (+- 0.0503)
+1 won 2763 times, 2 won 2464 times, 3 won 1317 times, 4 won 956 times
+avg regret random, copeland, liquid: 1.4783 (+- 0.0503)
+1 won 2802 times, 2 won 2433 times, 3 won 1294 times, 4 won 971 times
+#######
+avg regret regular, plurality, direct: 1.4797 (+- 0.0529)
+1 won 2953 times, 2 won 3931 times, 3 won 619 times, 4 won 2497 times
+avg regret regular, plurality, proxy: 1.4812 (+- 0.0542)
+1 won 2570 times, 2 won 4195 times, 3 won 192 times, 4 won 3043 times
+avg regret regular, plurality, liquid: 1.4804 (+- 0.0540)
+1 won 2588 times, 2 won 4244 times, 3 won 183 times, 4 won 2985 times
+#######
+avg regret regular, borda, direct: 1.4828 (+- 0.0529)
+1 won 3157 times, 2 won 3422 times, 3 won 1446 times, 4 won 1975 times
+avg regret regular, borda, proxy: 1.4831 (+- 0.0532)
+1 won 3199 times, 2 won 3382 times, 3 won 1159 times, 4 won 2260 times
+avg regret regular, borda, liquid: 1.4837 (+- 0.0536)
+1 won 3073 times, 2 won 3447 times, 3 won 1157 times, 4 won 2323 times
+#######
+avg regret regular, copeland, direct: 1.4787 (+- 0.0510)
+1 won 3608 times, 2 won 3357 times, 3 won 1367 times, 4 won 1668 times
+avg regret regular, copeland, proxy: 1.4764 (+- 0.0501)
+1 won 3954 times, 2 won 3268 times, 3 won 861 times, 4 won 1917 times
+avg regret regular, copeland, liquid: 1.4765 (+- 0.0503)
+1 won 3822 times, 2 won 3385 times, 3 won 855 times, 4 won 1938 times
+#######
+avg regret scale-free, plurality, direct: 1.4804 (+- 0.0530)
+1 won 728 times, 2 won 976 times, 3 won 190 times, 4 won 606 times
+avg regret scale-free, plurality, proxy: 1.5001 (+- 0.0575)
+1 won 640 times, 2 won 658 times, 3 won 36 times, 4 won 1166 times
+avg regret scale-free, plurality, liquid: 1.5124 (+- 0.0561)
+1 won 646 times, 2 won 398 times, 3 won 22 times, 4 won 1434 times
+#######
+avg regret scale-free, borda, direct: 1.4851 (+- 0.0537)
+1 won 660 times, 2 won 917 times, 3 won 472 times, 4 won 451 times
+avg regret scale-free, borda, proxy: 1.4898 (+- 0.0559)
+1 won 525 times, 2 won 955 times, 3 won 310 times, 4 won 710 times
+avg regret scale-free, borda, liquid: 1.4961 (+- 0.0567)
+1 won 575 times, 2 won 782 times, 3 won 271 times, 4 won 872 times
+#######
+avg regret scale-free, copeland, direct: 1.4815 (+- 0.0522)
+1 won 756 times, 2 won 905 times, 3 won 459 times, 4 won 380 times
+avg regret scale-free, copeland, proxy: 1.4908 (+- 0.0549)
+1 won 878 times, 2 won 614 times, 3 won 269 times, 4 won 739 times
+avg regret scale-free, copeland, liquid: 1.4971 (+- 0.0554)
+1 won 912 times, 2 won 450 times, 3 won 282 times, 4 won 856 times
+#######
+avg regret small-world, plurality, direct: 1.4803 (+- 0.0529)
+1 won 9195 times, 2 won 11336 times, 3 won 2052 times, 4 won 7417 times
+avg regret small-world, plurality, proxy: 1.4781 (+- 0.0531)
+1 won 7506 times, 2 won 13544 times, 3 won 749 times, 4 won 8201 times
+avg regret small-world, plurality, liquid: 1.4779 (+- 0.0530)
+1 won 7590 times, 2 won 13514 times, 3 won 626 times, 4 won 8270 times
+#######
+avg regret small-world, borda, direct: 1.4819 (+- 0.0523)
+1 won 10079 times, 2 won 9879 times, 3 won 4753 times, 4 won 5289 times
+avg regret small-world, borda, proxy: 1.4765 (+- 0.0502)
+1 won 10285 times, 2 won 11080 times, 3 won 4268 times, 4 won 4367 times
+avg regret small-world, borda, liquid: 1.4769 (+- 0.0503)
+1 won 10297 times, 2 won 10988 times, 3 won 4272 times, 4 won 4443 times
+#######
+avg regret small-world, copeland, direct: 1.4781 (+- 0.0504)
+1 won 11182 times, 2 won 9856 times, 3 won 4502 times, 4 won 4460 times
+avg regret small-world, copeland, proxy: 1.4716 (+- 0.0471)
+1 won 11655 times, 2 won 11076 times, 3 won 4073 times, 4 won 3196 times
+avg regret small-world, copeland, liquid: 1.4721 (+- 0.0474)
+1 won 11654 times, 2 won 10943 times, 3 won 4082 times, 4 won 3321 times
+#######
+######### T-TESTS ###########
+path, plurality, proxy/liquid: FAILED
+path, plurality, liquid/direct: PASSED
+path, plurality, proxy/direct: PASSED
+path, borda, proxy/liquid: PASSED
+path, borda, liquid/direct: PASSED
+path, borda, proxy/direct: PASSED
+path, copeland, proxy/liquid: PASSED
+path, copeland, liquid/direct: PASSED
+path, copeland, proxy/direct: PASSED
+##
+random, plurality, proxy/liquid: FAILED
+random, plurality, liquid/direct: PASSED
+random, plurality, proxy/direct: PASSED
+random, borda, proxy/liquid: FAILED
+random, borda, liquid/direct: PASSED
+random, borda, proxy/direct: PASSED
+random, copeland, proxy/liquid: FAILED
+random, copeland, liquid/direct: PASSED
+random, copeland, proxy/direct: PASSED
+##
+regular, plurality, proxy/liquid: FAILED
+regular, plurality, liquid/direct: FAILED
+regular, plurality, proxy/direct: FAILED
+regular, borda, proxy/liquid: FAILED
+regular, borda, liquid/direct: FAILED
+regular, borda, proxy/direct: FAILED
+regular, copeland, proxy/liquid: FAILED
+regular, copeland, liquid/direct: PASSED
+regular, copeland, proxy/direct: PASSED
+##
+scale-free, plurality, proxy/liquid: PASSED
+scale-free, plurality, liquid/direct: PASSED
+scale-free, plurality, proxy/direct: PASSED
+scale-free, borda, proxy/liquid: PASSED
+scale-free, borda, liquid/direct: PASSED
+scale-free, borda, proxy/direct: PASSED
+scale-free, copeland, proxy/liquid: PASSED
+scale-free, copeland, liquid/direct: PASSED
+scale-free, copeland, proxy/direct: PASSED
+##
+small-world, plurality, proxy/liquid: FAILED
+small-world, plurality, liquid/direct: PASSED
+small-world, plurality, proxy/direct: PASSED
+small-world, borda, proxy/liquid: FAILED
+small-world, borda, liquid/direct: PASSED
+small-world, borda, proxy/direct: PASSED
+small-world, copeland, proxy/liquid: FAILED
+small-world, copeland, liquid/direct: PASSED
+small-world, copeland, proxy/direct: PASSED
+##
+*********
+avg partial regret path, plurality, direct: 0.6474 (+- 0.0769)
+avg partial regret path, plurality, proxy: 0.6435 (+- 0.0801)
+avg partial regret path, plurality, liquid: 0.6448 (+- 0.0791)
+#######
+avg partial regret path, borda, direct: 0.6406 (+- 0.0765)
+avg partial regret path, borda, proxy: 0.6357 (+- 0.0800)
+avg partial regret path, borda, liquid: 0.6357 (+- 0.0784)
+#######
+avg partial regret path, copeland, direct: 0.6418 (+- 0.0771)
+avg partial regret path, copeland, proxy: 0.6378 (+- 0.0804)
+avg partial regret path, copeland, liquid: 0.6387 (+- 0.0793)
+#######
+avg partial regret random, plurality, direct: 0.6185 (+- 0.0825)
+avg partial regret random, plurality, proxy: 0.6056 (+- 0.0828)
+avg partial regret random, plurality, liquid: 0.6065 (+- 0.0830)
+#######
+avg partial regret random, borda, direct: 0.6118 (+- 0.0843)
+avg partial regret random, borda, proxy: 0.5938 (+- 0.0794)
+avg partial regret random, borda, liquid: 0.5938 (+- 0.0792)
+#######
+avg partial regret random, copeland, direct: 0.6141 (+- 0.0849)
+avg partial regret random, copeland, proxy: 0.5996 (+- 0.0812)
+avg partial regret random, copeland, liquid: 0.5996 (+- 0.0811)
+#######
+avg partial regret regular, plurality, direct: 0.6374 (+- 0.0858)
+avg partial regret regular, plurality, proxy: 0.6271 (+- 0.0839)
+avg partial regret regular, plurality, liquid: 0.6275 (+- 0.0838)
+#######
+avg partial regret regular, borda, direct: 0.6296 (+- 0.0816)
+avg partial regret regular, borda, proxy: 0.6146 (+- 0.0786)
+avg partial regret regular, borda, liquid: 0.6150 (+- 0.0790)
+#######
+avg partial regret regular, copeland, direct: 0.6327 (+- 0.0823)
+avg partial regret regular, copeland, proxy: 0.6203 (+- 0.0797)
+avg partial regret regular, copeland, liquid: 0.6201 (+- 0.0797)
+#######
+avg partial regret scale-free, plurality, direct: 0.6448 (+- 0.0796)
+avg partial regret scale-free, plurality, proxy: 0.6535 (+- 0.0808)
+avg partial regret scale-free, plurality, liquid: 0.6586 (+- 0.0810)
+#######
+avg partial regret scale-free, borda, direct: 0.6351 (+- 0.0802)
+avg partial regret scale-free, borda, proxy: 0.6351 (+- 0.0778)
+avg partial regret scale-free, borda, liquid: 0.6387 (+- 0.0801)
+#######
+avg partial regret scale-free, copeland, direct: 0.6367 (+- 0.0799)
+avg partial regret scale-free, copeland, proxy: 0.6381 (+- 0.0809)
+avg partial regret scale-free, copeland, liquid: 0.6406 (+- 0.0837)
+#######
+avg partial regret small-world, plurality, direct: 0.6355 (+- 0.0801)
+avg partial regret small-world, plurality, proxy: 0.6283 (+- 0.0785)
+avg partial regret small-world, plurality, liquid: 0.6290 (+- 0.0782)
+#######
+avg partial regret small-world, borda, direct: 0.6270 (+- 0.0769)
+avg partial regret small-world, borda, proxy: 0.6144 (+- 0.0727)
+avg partial regret small-world, borda, liquid: 0.6151 (+- 0.0727)
+#######
+avg partial regret small-world, copeland, direct: 0.6284 (+- 0.0773)
+avg partial regret small-world, copeland, proxy: 0.6173 (+- 0.0740)
+avg partial regret small-world, copeland, liquid: 0.6180 (+- 0.0740)
+#######
+######### T-TESTS ###########
+path, plurality, proxy/liquid: FAILED
+path, plurality, liquid/direct: FAILED
+path, plurality, proxy/direct: FAILED
+path, borda, proxy/liquid: FAILED
+path, borda, liquid/direct: PASSED
+path, borda, proxy/direct: PASSED
+path, copeland, proxy/liquid: FAILED
+path, copeland, liquid/direct: FAILED
+path, copeland, proxy/direct: FAILED
+##
+random, plurality, proxy/liquid: FAILED
+random, plurality, liquid/direct: PASSED
+random, plurality, proxy/direct: PASSED
+random, borda, proxy/liquid: FAILED
+random, borda, liquid/direct: PASSED
+random, borda, proxy/direct: PASSED
+random, copeland, proxy/liquid: FAILED
+random, copeland, liquid/direct: PASSED
+random, copeland, proxy/direct: PASSED
+##
+regular, plurality, proxy/liquid: FAILED
+regular, plurality, liquid/direct: PASSED
+regular, plurality, proxy/direct: PASSED
+regular, borda, proxy/liquid: FAILED
+regular, borda, liquid/direct: PASSED
+regular, borda, proxy/direct: PASSED
+regular, copeland, proxy/liquid: FAILED
+regular, copeland, liquid/direct: PASSED
+regular, copeland, proxy/direct: PASSED
+##
+scale-free, plurality, proxy/liquid: PASSED
+scale-free, plurality, liquid/direct: PASSED
+scale-free, plurality, proxy/direct: PASSED
+scale-free, borda, proxy/liquid: FAILED
+scale-free, borda, liquid/direct: FAILED
+scale-free, borda, proxy/direct: FAILED
+scale-free, copeland, proxy/liquid: FAILED
+scale-free, copeland, liquid/direct: FAILED
+scale-free, copeland, proxy/direct: FAILED
+##
+small-world, plurality, proxy/liquid: FAILED
+small-world, plurality, liquid/direct: PASSED
+small-world, plurality, proxy/direct: PASSED
+small-world, borda, proxy/liquid: FAILED
+small-world, borda, liquid/direct: PASSED
+small-world, borda, proxy/direct: PASSED
+small-world, copeland, proxy/liquid: FAILED
+small-world, copeland, liquid/direct: PASSED
+small-world, copeland, proxy/direct: PASSED
+##
+*********
+
+--voters_source types --print_winners --voters 100 --experiments 100 --graphs_per_setting 25
+
+avg regret path, plurality, direct: 1.3240 (+- 0.1779)
+1 won 65 times, 2 won 1119 times, 3 won 830 times, 4 won 486 times
+avg regret path, plurality, proxy: 1.3132 (+- 0.1535)
+1 won 14 times, 2 won 1173 times, 3 won 810 times, 4 won 503 times
+avg regret path, plurality, liquid: 1.3068 (+- 0.1510)
+1 won 10 times, 2 won 1133 times, 3 won 874 times, 4 won 483 times
+#######
+avg regret path, borda, direct: 1.2324 (+- 0.0942)
+1 won 4 times, 2 won 955 times, 3 won 1448 times, 4 won 93 times
+avg regret path, borda, proxy: 1.2100 (+- 0.0641)
+2 won 768 times, 3 won 1713 times, 4 won 19 times
+avg regret path, borda, liquid: 1.2071 (+- 0.0623)
+2 won 714 times, 3 won 1769 times, 4 won 17 times
+#######
+avg regret path, copeland, direct: 1.2375 (+- 0.1051)
+1 won 13 times, 2 won 978 times, 3 won 1409 times, 4 won 100 times
+avg regret path, copeland, proxy: 1.2114 (+- 0.0645)
+2 won 798 times, 3 won 1683 times, 4 won 19 times
+avg regret path, copeland, liquid: 1.2107 (+- 0.0646)
+2 won 779 times, 3 won 1701 times, 4 won 20 times
+#######
+avg regret random, plurality, direct: 1.3415 (+- 0.1920)
+1 won 246 times, 2 won 2991 times, 3 won 2475 times, 4 won 1788 times
+avg regret random, plurality, proxy: 1.3705 (+- 0.1842)
+1 won 80 times, 2 won 2432 times, 3 won 2186 times, 4 won 2802 times
+avg regret random, plurality, liquid: 1.3659 (+- 0.1815)
+1 won 64 times, 2 won 2489 times, 3 won 2216 times, 4 won 2731 times
+#######
+avg regret random, borda, direct: 1.2470 (+- 0.1209)
+1 won 33 times, 2 won 2658 times, 3 won 4242 times, 4 won 567 times
+avg regret random, borda, proxy: 1.2047 (+- 0.0717)
+2 won 1695 times, 3 won 5667 times, 4 won 138 times
+avg regret random, borda, liquid: 1.2063 (+- 0.0733)
+2 won 1766 times, 3 won 5587 times, 4 won 147 times
+#######
+avg regret random, copeland, direct: 1.2457 (+- 0.1251)
+1 won 63 times, 2 won 2625 times, 3 won 4317 times, 4 won 495 times
+avg regret random, copeland, proxy: 1.2016 (+- 0.0694)
+1 won 2 times, 2 won 1553 times, 3 won 5826 times, 4 won 119 times
+avg regret random, copeland, liquid: 1.2030 (+- 0.0705)
+1 won 1 times, 2 won 1620 times, 3 won 5751 times, 4 won 128 times
+#######
+avg regret regular, plurality, direct: 1.3272 (+- 0.1864)
+1 won 286 times, 2 won 3902 times, 3 won 3671 times, 4 won 2141 times
+avg regret regular, plurality, proxy: 1.3280 (+- 0.1708)
+1 won 135 times, 2 won 4221 times, 3 won 3285 times, 4 won 2359 times
+avg regret regular, plurality, liquid: 1.3277 (+- 0.1721)
+1 won 140 times, 2 won 4130 times, 3 won 3362 times, 4 won 2368 times
+#######
+avg regret regular, borda, direct: 1.2341 (+- 0.1129)
+1 won 24 times, 2 won 2921 times, 3 won 6392 times, 4 won 663 times
+avg regret regular, borda, proxy: 1.2048 (+- 0.0740)
+2 won 2183 times, 3 won 7606 times, 4 won 211 times
+avg regret regular, borda, liquid: 1.2040 (+- 0.0727)
+2 won 2160 times, 3 won 7642 times, 4 won 198 times
+#######
+avg regret regular, copeland, direct: 1.2337 (+- 0.1096)
+1 won 41 times, 2 won 3239 times, 3 won 6194 times, 4 won 526 times
+avg regret regular, copeland, proxy: 1.2057 (+- 0.0684)
+1 won 4 times, 2 won 2531 times, 3 won 7342 times, 4 won 123 times
+avg regret regular, copeland, liquid: 1.2059 (+- 0.0691)
+1 won 1 times, 2 won 2498 times, 3 won 7358 times, 4 won 143 times
+#######
+avg regret scale-free, plurality, direct: 1.3065 (+- 0.1616)
+1 won 48 times, 2 won 1219 times, 3 won 850 times, 4 won 383 times
+avg regret scale-free, plurality, proxy: 1.3654 (+- 0.1771)
+1 won 3 times, 2 won 785 times, 3 won 756 times, 4 won 956 times
+avg regret scale-free, plurality, liquid: 1.4200 (+- 0.1823)
+2 won 487 times, 3 won 631 times, 4 won 1382 times
+#######
+avg regret scale-free, borda, direct: 1.2338 (+- 0.0959)
+1 won 2 times, 2 won 943 times, 3 won 1446 times, 4 won 109 times
+avg regret scale-free, borda, proxy: 1.2282 (+- 0.0927)
+2 won 854 times, 3 won 1541 times, 4 won 105 times
+avg regret scale-free, borda, liquid: 1.2536 (+- 0.1270)
+2 won 803 times, 3 won 1422 times, 4 won 275 times
+#######
+avg regret scale-free, copeland, direct: 1.2374 (+- 0.0920)
+1 won 5 times, 2 won 1095 times, 3 won 1319 times, 4 won 81 times
+avg regret scale-free, copeland, proxy: 1.2436 (+- 0.0972)
+2 won 1100 times, 3 won 1273 times, 4 won 127 times
+avg regret scale-free, copeland, liquid: 1.2756 (+- 0.1405)
+2 won 892 times, 3 won 1225 times, 4 won 383 times
+#######
+avg regret small-world, plurality, direct: 1.3314 (+- 0.1829)
+1 won 872 times, 2 won 13276 times, 3 won 9610 times, 4 won 6242 times
+avg regret small-world, plurality, proxy: 1.3357 (+- 0.1638)
+1 won 239 times, 2 won 13841 times, 3 won 8304 times, 4 won 7616 times
+avg regret small-world, plurality, liquid: 1.3349 (+- 0.1620)
+1 won 207 times, 2 won 14004 times, 3 won 8220 times, 4 won 7569 times
+#######
+avg regret small-world, borda, direct: 1.2414 (+- 0.1139)
+1 won 110 times, 2 won 10605 times, 3 won 17375 times, 4 won 1910 times
+avg regret small-world, borda, proxy: 1.2053 (+- 0.0632)
+1 won 2 times, 2 won 7972 times, 3 won 21780 times, 4 won 246 times
+avg regret small-world, borda, liquid: 1.2045 (+- 0.0627)
+2 won 7786 times, 3 won 21966 times, 4 won 248 times
+#######
+avg regret small-world, copeland, direct: 1.2436 (+- 0.1191)
+1 won 266 times, 2 won 11408 times, 3 won 16790 times, 4 won 1536 times
+avg regret small-world, copeland, proxy: 1.2110 (+- 0.0646)
+1 won 28 times, 2 won 9685 times, 3 won 20175 times, 4 won 112 times
+avg regret small-world, copeland, liquid: 1.2101 (+- 0.0620)
+1 won 16 times, 2 won 9604 times, 3 won 20290 times, 4 won 90 times
+#######
+######### T-TESTS ###########
+path, plurality, liquid/proxy: FAILED
+path, plurality, liquid/direct: PASSED
+path, plurality, direct/proxy: PASSED
+path, borda, liquid/proxy: FAILED
+path, borda, liquid/direct: PASSED
+path, borda, direct/proxy: PASSED
+path, copeland, liquid/proxy: FAILED
+path, copeland, liquid/direct: PASSED
+path, copeland, direct/proxy: PASSED
+##
+random, plurality, liquid/proxy: FAILED
+random, plurality, liquid/direct: PASSED
+random, plurality, direct/proxy: PASSED
+random, borda, liquid/proxy: FAILED
+random, borda, liquid/direct: PASSED
+random, borda, direct/proxy: PASSED
+random, copeland, liquid/proxy: FAILED
+random, copeland, liquid/direct: PASSED
+random, copeland, direct/proxy: PASSED
+##
+regular, plurality, liquid/proxy: FAILED
+regular, plurality, liquid/direct: FAILED
+regular, plurality, direct/proxy: FAILED
+regular, borda, liquid/proxy: FAILED
+regular, borda, liquid/direct: PASSED
+regular, borda, direct/proxy: PASSED
+regular, copeland, liquid/proxy: FAILED
+regular, copeland, liquid/direct: PASSED
+regular, copeland, direct/proxy: PASSED
+##
+scale-free, plurality, liquid/proxy: PASSED
+scale-free, plurality, liquid/direct: PASSED
+scale-free, plurality, direct/proxy: PASSED
+scale-free, borda, liquid/proxy: PASSED
+scale-free, borda, liquid/direct: PASSED
+scale-free, borda, direct/proxy: PASSED
+scale-free, copeland, liquid/proxy: PASSED
+scale-free, copeland, liquid/direct: PASSED
+scale-free, copeland, direct/proxy: PASSED
+##
+small-world, plurality, liquid/proxy: FAILED
+small-world, plurality, liquid/direct: PASSED
+small-world, plurality, direct/proxy: PASSED
+small-world, borda, liquid/proxy: FAILED
+small-world, borda, liquid/direct: PASSED
+small-world, borda, direct/proxy: PASSED
+small-world, copeland, liquid/proxy: FAILED
+small-world, copeland, liquid/direct: PASSED
+small-world, copeland, direct/proxy: PASSED
+##
+*********
+avg partial regret path, plurality, direct: 0.5853 (+- 0.0914)
+avg partial regret path, plurality, proxy: 0.5741 (+- 0.0816)
+avg partial regret path, plurality, liquid: 0.5714 (+- 0.0809)
+#######
+avg partial regret path, borda, direct: 0.5464 (+- 0.0645)
+avg partial regret path, borda, proxy: 0.5360 (+- 0.0565)
+avg partial regret path, borda, liquid: 0.5373 (+- 0.0582)
+#######
+avg partial regret path, copeland, direct: 0.5495 (+- 0.0665)
+avg partial regret path, copeland, proxy: 0.5388 (+- 0.0577)
+avg partial regret path, copeland, liquid: 0.5400 (+- 0.0600)
+#######
+avg partial regret random, plurality, direct: 0.5636 (+- 0.0924)
+avg partial regret random, plurality, proxy: 0.5656 (+- 0.0898)
+avg partial regret random, plurality, liquid: 0.5638 (+- 0.0888)
+#######
+avg partial regret random, borda, direct: 0.5329 (+- 0.0728)
+avg partial regret random, borda, proxy: 0.5188 (+- 0.0641)
+avg partial regret random, borda, liquid: 0.5184 (+- 0.0640)
+#######
+avg partial regret random, copeland, direct: 0.5335 (+- 0.0716)
+avg partial regret random, copeland, proxy: 0.5212 (+- 0.0636)
+avg partial regret random, copeland, liquid: 0.5211 (+- 0.0633)
+#######
+avg partial regret regular, plurality, direct: 0.5595 (+- 0.1063)
+avg partial regret regular, plurality, proxy: 0.5500 (+- 0.1004)
+avg partial regret regular, plurality, liquid: 0.5497 (+- 0.0997)
+#######
+avg partial regret regular, borda, direct: 0.5212 (+- 0.0806)
+avg partial regret regular, borda, proxy: 0.5055 (+- 0.0718)
+avg partial regret regular, borda, liquid: 0.5053 (+- 0.0716)
+#######
+avg partial regret regular, copeland, direct: 0.5225 (+- 0.0811)
+avg partial regret regular, copeland, proxy: 0.5072 (+- 0.0733)
+avg partial regret regular, copeland, liquid: 0.5073 (+- 0.0736)
+#######
+avg partial regret scale-free, plurality, direct: 0.5642 (+- 0.1065)
+avg partial regret scale-free, plurality, proxy: 0.5960 (+- 0.1206)
+avg partial regret scale-free, plurality, liquid: 0.6239 (+- 0.1231)
+#######
+avg partial regret scale-free, borda, direct: 0.5340 (+- 0.0769)
+avg partial regret scale-free, borda, proxy: 0.5307 (+- 0.0750)
+avg partial regret scale-free, borda, liquid: 0.5404 (+- 0.0827)
+#######
+avg partial regret scale-free, copeland, direct: 0.5353 (+- 0.0761)
+avg partial regret scale-free, copeland, proxy: 0.5361 (+- 0.0780)
+avg partial regret scale-free, copeland, liquid: 0.5538 (+- 0.0898)
+#######
+avg partial regret small-world, plurality, direct: 0.5799 (+- 0.1009)
+avg partial regret small-world, plurality, proxy: 0.5757 (+- 0.0944)
+avg partial regret small-world, plurality, liquid: 0.5761 (+- 0.0945)
+#######
+avg partial regret small-world, borda, direct: 0.5467 (+- 0.0790)
+avg partial regret small-world, borda, proxy: 0.5330 (+- 0.0721)
+avg partial regret small-world, borda, liquid: 0.5327 (+- 0.0720)
+#######
+avg partial regret small-world, copeland, direct: 0.5483 (+- 0.0806)
+avg partial regret small-world, copeland, proxy: 0.5357 (+- 0.0735)
+avg partial regret small-world, copeland, liquid: 0.5356 (+- 0.0734)
+#######
+######### T-TESTS ###########
+path, plurality, liquid/proxy: FAILED
+path, plurality, liquid/direct: PASSED
+path, plurality, direct/proxy: PASSED
+path, borda, liquid/proxy: FAILED
+path, borda, liquid/direct: PASSED
+path, borda, direct/proxy: PASSED
+path, copeland, liquid/proxy: FAILED
+path, copeland, liquid/direct: PASSED
+path, copeland, direct/proxy: PASSED
+##
+random, plurality, liquid/proxy: FAILED
+random, plurality, liquid/direct: FAILED
+random, plurality, direct/proxy: FAILED
+random, borda, liquid/proxy: FAILED
+random, borda, liquid/direct: PASSED
+random, borda, direct/proxy: PASSED
+random, copeland, liquid/proxy: FAILED
+random, copeland, liquid/direct: PASSED
+random, copeland, direct/proxy: PASSED
+##
+regular, plurality, liquid/proxy: FAILED
+regular, plurality, liquid/direct: PASSED
+regular, plurality, direct/proxy: PASSED
+regular, borda, liquid/proxy: FAILED
+regular, borda, liquid/direct: PASSED
+regular, borda, direct/proxy: PASSED
+regular, copeland, liquid/proxy: FAILED
+regular, copeland, liquid/direct: PASSED
+regular, copeland, direct/proxy: PASSED
+##
+scale-free, plurality, liquid/proxy: PASSED
+scale-free, plurality, liquid/direct: PASSED
+scale-free, plurality, direct/proxy: PASSED
+scale-free, borda, liquid/proxy: PASSED
+scale-free, borda, liquid/direct: PASSED
+scale-free, borda, direct/proxy: FAILED
+scale-free, copeland, liquid/proxy: PASSED
+scale-free, copeland, liquid/direct: PASSED
+scale-free, copeland, direct/proxy: FAILED
+##
+small-world, plurality, liquid/proxy: FAILED
+small-world, plurality, liquid/direct: PASSED
+small-world, plurality, direct/proxy: PASSED
+small-world, borda, liquid/proxy: FAILED
+small-world, borda, liquid/direct: PASSED
+small-world, borda, direct/proxy: PASSED
+small-world, copeland, liquid/proxy: FAILED
+small-world, copeland, liquid/direct: PASSED
+small-world, copeland, direct/proxy: PASSED
+##
+*********
