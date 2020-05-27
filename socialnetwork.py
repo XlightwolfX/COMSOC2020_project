@@ -32,7 +32,6 @@ class SocialNetwork:
 
         if strategy == 'from_voter_graph':
             assert isinstance(id2voter, dict) and (isinstance(graph, dict) or isinstance(graph, nx.DiGraph))
-            assert id2voter.keys() == graph.keys()
             self.id2voter = id2voter
             self.graph = nx.DiGraph(graph) if isinstance(graph, dict) else graph
 
