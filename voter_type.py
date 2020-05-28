@@ -17,7 +17,11 @@ class VoterTypes:
         if gen_type == 'half_normal':
             self._types = []
             self._pick_types()
-            self._hn_values = np.array([self._half_normal_pdf(x) for x in range(4)])
+            hn_values = np.array([self._half_normal_pdf(x) for x in range(4)])
+            self.distributions = []
+            for i in range(4):
+                distribution = hn_values[:4 - i] / sum(hn_values[:4 - i])
+                self.distributions.append(distribution)
 
         if gen_type == 'tshirt':
             self._tshirt_init()
@@ -54,15 +58,13 @@ class VoterTypes:
             t = self._types[np.random.randint(self._num_types)][:]
 
         for i in range(4):
-            distribution = self._hn_values[:4 - i] / sum(self._hn_values[:4 - i])
-            alternative = np.random.choice(t, p=distribution)
+            alternative = np.random.choice(t, p=self.distributions[i])
             t.remove(alternative)
             strict_order.append(alternative)
         return strict_order
 
     def _half_normal_pdf(self, x, sigma=1):
         return (2**0.5 / (sigma * np.pi)) * np.exp(- (x**2 / (2 * sigma**2)))
-
 
 
 if __name__ == "__main__":

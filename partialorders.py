@@ -99,7 +99,6 @@ class PartialOrder:
 
         return (self.edges != other.edges) and self.edges.issuperset(other.edges)
 
-
     # this might not be a good score
     def compute_indecisivness(self):
         """ Give "indecisivness" score (i.e., number of consistent strict orders) to self (normalized)

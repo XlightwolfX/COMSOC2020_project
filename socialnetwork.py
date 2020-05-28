@@ -5,6 +5,7 @@ import random
 from collections import Counter
 import networkx as nx
 import matplotlib.pyplot as plt
+import numpy as np
 
 class SocialNetwork:
     """Class representing the social network"""
@@ -17,7 +18,7 @@ class SocialNetwork:
         for strict, count in zip(dataset.preferences, dataset.counts):
             for _ in range(count):
                 # TODO: parametrize the indiff level!!
-                partial = PartialOrder.generate_from_strict(strict, random.choice(possible_indecision_levels))
+                partial = PartialOrder.generate_from_strict(strict, np.random.choice(possible_indecision_levels))
                 voter = Voter(partial, strict)
                 id2voter[voter_id_count] = voter
                 voter_id_count += 1
@@ -43,7 +44,7 @@ class SocialNetwork:
         elif strategy == 'dataset_and_random_edges':
             self.id2voter = SocialNetwork._convert_dataset_into_id2voter(dataset, possible_indecision_levels)
             self.graph = list(generate_graphs(num_voters=dataset.count_voters(), num_graphs=1, gtype=graph_generation, seed = graph_seed))[0]
-            
+
         else:
             raise NotImplementedError("This graph-creation strategy does not exist.")
 
@@ -52,7 +53,7 @@ class SocialNetwork:
             plt.show()
 
     def getNeighbours(self, voter_id):
-        """ Returns a list of neighbours for a voter 
+        """ Returns a list of neighbours for a voter
 
         Parameters:
         voter_id (int): the voter's numerical id
@@ -63,10 +64,10 @@ class SocialNetwork:
         return list(self.graph.successors(voter_id))
 
     def _pick_delegations(self, paradigm = 'liquid', print_delegations = False):
-        """ Pick the delegations for each voter. 
+        """ Pick the delegations for each voter.
 
         Parameters:
-        paradigm (str): direct voting, proxy voting or liquid democracy? 
+        paradigm (str): direct voting, proxy voting or liquid democracy?
         print_delegations (bool): whether to print the selected delegations
 
         Returns:
@@ -138,10 +139,10 @@ class SocialNetwork:
         return delegations
 
     def _cast_votes(self, paradigm = 'liquid', print_delegations = False):
-        """ Assign to each voter a vote. 
+        """ Assign to each voter a vote.
 
         Parameters:
-        paradigm (str): which paradigm? (liquid, direct, proxy...) 
+        paradigm (str): which paradigm? (liquid, direct, proxy...)
         print_delegations (bool): whether to print the selected delegations
 
         Returns:
@@ -159,11 +160,11 @@ class SocialNetwork:
         return votes
 
     def _retrieve_vote(self, voter_id, votes, delegations):
-        """ Recursvely get the voter_id's vote from delegation graph 
+        """ Recursvely get the voter_id's vote from delegation graph
 
         Parameters:
         voter_id (int): a voter
-        votes dict(int, list(int)): a mapping from a voter id to a preference 
+        votes dict(int, list(int)): a mapping from a voter id to a preference
         delegations (dict(int, [int, NoneType]): delegations from voter id to another
 
         Returns:
@@ -173,7 +174,7 @@ class SocialNetwork:
         if voter_id in votes.keys():
             return votes[voter_id]
         # otherwise...
-        # if he does not delegate, 
+        # if he does not delegate,
         # save his vote and return it
         elif delegations[voter_id] is None:
             votes[voter_id] = self.id2voter[voter_id].cast_random_vote()
@@ -212,7 +213,7 @@ class SocialNetwork:
         return filt_d
 
     def get_preferences(self, paradigm = 'liquid', print_delegations = False, print_preferences = False):
-        """ Return the preference list of the social network. This function 
+        """ Return the preference list of the social network. This function
         creates the delegations, casts the votes and returns the preference lists.
 
         Parameters:
@@ -254,7 +255,7 @@ class SocialNetwork:
 
     def pretty_print_pref(self, preferences, counts):
         """ Print cutely the preferences of the electorate
-        
+
         Parameters:
         preferences (list(list(int))): ballots
         counts (list(int)): one per each ballot; number of people who submitted that ballot """
