@@ -17,7 +17,6 @@ class SocialNetwork:
         id2voter = dict()
         for strict, count in zip(dataset.preferences, dataset.counts):
             for _ in range(count):
-                # TODO: parametrize the indiff level!!
                 partial = PartialOrder.generate_from_strict(strict, np.random.choice(possible_indecision_levels))
                 voter = Voter(partial, strict)
                 id2voter[voter_id_count] = voter
