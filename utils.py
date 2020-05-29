@@ -1,6 +1,7 @@
 import networkx as nx
 from partialorders import PartialOrder
 
+
 def regret(winner, preferences, counts):
     regret = []
     assert len(preferences) == len(counts)
@@ -10,6 +11,7 @@ def regret(winner, preferences, counts):
         regret += [preference.index(winner)] * count
 
     return sum(regret) * 1. / len(regret)
+
 
 def partial_regret(winner, voters):
     # compute average partial regret, that is, per each
@@ -21,10 +23,10 @@ def partial_regret(winner, voters):
 
     return sum(p_regret) * 1. / len(p_regret)
 
-def ind_levels(N):
 
+def ind_levels(N):
     # function that we will use to get the edges from a dictionary-graph
-    get_edges = lambda graph : {(i, j) for i in graph.keys() for j in graph[i]}
+    get_edges = lambda graph: {(i, j) for i in graph.keys() for j in graph[i]}
 
     # will contain all indifference levels
     all_levels = set()
@@ -41,10 +43,10 @@ def ind_levels(N):
 
         edges = get_edges(graph)
 
-        # for all edges, drop this edge and 
+        # for all edges, drop this edge and
         # compute recursevly indecision on the obtained graph
         for edge in edges:
-            new_partial = {i:[] for i in graph.keys()}
+            new_partial = {i: [] for i in graph.keys()}
             for edge_prime in edges:
                 if edge != edge_prime:
                     i, j = edge_prime

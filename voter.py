@@ -1,5 +1,3 @@
-from partialorders import PartialOrder
-
 class Voter:
     """Class representing a voter in the social network"""
 
@@ -26,8 +24,8 @@ class Voter:
 
         return self.partial.random_strict_order()
 
-    def delegate(self, neighbours_ids, neighbours, criteria = 'min_indecision'):
-        """ Choose whom to delegate to. Criteria: among those who are consistent, pick 
+    def delegate(self, neighbours_ids, neighbours, criteria='min_indecision'):
+        """ Choose whom to delegate to. Criteria: among those who are consistent, pick
         the less indecisive. If none is consistent, return none."
 
         Parameters:

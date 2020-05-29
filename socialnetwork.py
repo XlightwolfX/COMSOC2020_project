@@ -24,7 +24,7 @@ class SocialNetwork:
                 voter_id_count += 1
         return id2voter
 
-    def __init__(self, strategy = '', print_graph = False, possible_indecision_levels = None, id2voter = None, graph = None, dataset = None, graph_generation = None, graph_seed = None):
+    def __init__(self, strategy='', print_graph=False, possible_indecision_levels=None, id2voter=None, graph=None, dataset=None, graph_generation=None, graph_seed=None):
         """ Initialize the Social Network.
 
         Parameters:
@@ -43,7 +43,7 @@ class SocialNetwork:
 
         elif strategy == 'dataset_and_random_edges':
             self.id2voter = SocialNetwork._convert_dataset_into_id2voter(dataset, possible_indecision_levels)
-            self.graph = list(generate_graphs(num_voters=dataset.count_voters(), num_graphs=1, gtype=graph_generation, seed = graph_seed))[0]
+            self.graph = list(generate_graphs(num_voters=dataset.count_voters(), num_graphs=1, gtype=graph_generation, seed=graph_seed))[0]
 
         else:
             raise NotImplementedError("This graph-creation strategy does not exist.")
@@ -63,7 +63,7 @@ class SocialNetwork:
 
         return list(self.graph.successors(voter_id))
 
-    def _pick_delegations(self, paradigm = 'liquid', print_delegations = False):
+    def _pick_delegations(self, paradigm='liquid', print_delegations=False):
         """ Pick the delegations for each voter.
 
         Parameters:
@@ -108,7 +108,7 @@ class SocialNetwork:
                 assert voter_id >= 0, 'voter id must be positive'
                 try:
                     # skip decisive voters that vote already
-                    if delegations[voter_id] == None:
+                    if delegations[voter_id] is None:
                         continue
                 except KeyError:
                     # get its neighbours' ids
@@ -138,7 +138,7 @@ class SocialNetwork:
 
         return delegations
 
-    def _cast_votes(self, paradigm = 'liquid', print_delegations = False):
+    def _cast_votes(self, paradigm='liquid', print_delegations=False):
         """ Assign to each voter a vote.
 
         Parameters:
@@ -201,7 +201,7 @@ class SocialNetwork:
         for voter in d:
             try:
                 # add a voter id iff the voter declared to vote in 1st round
-                if delegations[voter] == None:
+                if delegations[voter] is None:
                     filt_d.append(voter)
             except:
                 # voter has no declared delegation decision=> he did not choose to vote in 1st round
@@ -212,7 +212,7 @@ class SocialNetwork:
 
         return filt_d
 
-    def get_preferences(self, paradigm = 'liquid', print_delegations = False, print_preferences = False):
+    def get_preferences(self, paradigm='liquid', print_delegations=False, print_preferences=False):
         """ Return the preference list of the social network. This function
         creates the delegations, casts the votes and returns the preference lists.
 
@@ -260,5 +260,5 @@ class SocialNetwork:
         preferences (list(list(int))): ballots
         counts (list(int)): one per each ballot; number of people who submitted that ballot """
 
-        for pref, count in sorted(zip(preferences, counts), key = lambda x: -x[1]):
+        for pref, count in sorted(zip(preferences, counts), key=lambda x: -x[1]):
             print(f"{count} voters think that {pref}")

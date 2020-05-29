@@ -2,7 +2,7 @@ from socialnetwork import SocialNetwork
 import argparse
 import numpy as np
 from tqdm import tqdm
-from utils import regret, partial_regret, ind_levels
+from utils import regret, partial_regret
 from collections import defaultdict
 from votingrules import VotingRules
 from dataset import Dataset
@@ -10,52 +10,6 @@ from networks import generate_graphs
 import random
 from scipy.stats import ttest_ind
 
-import multiprocessing
-
-
-def worker(procnum, return_dict, args, possible_indecision_levels, paradigms, graph_type, graphs):
-    winners = dict()
-    regrets = dict()
-    partial_regrets = dict()
-
-    for paradigm in paradigms:
-        winners[paradigm] = dict()
-        regrets[paradigm] = dict()
-        partial_regrets[paradigm] = dict()
-        for rule in VotingRules.rules:
-            winners[paradigm][rule] = dict()
-            regrets[paradigm][rule] = []
-            partial_regrets[paradigm][rule] = []
-
-    for graph in graphs:
-        for _ in range(args.experiments):
-            data = Dataset(source='type_random', rand_params=[args.alternatives, args.voters, args.voter_types],
-                           type_generation=args.type_gen)
-            true_preferences, true_counts = data.preferences, data.counts
-            SN = SocialNetwork(strategy = 'dataset_and_nx_graph', possible_indecision_levels = possible_indecision_levels, \
-                               graph = graph, dataset = data, print_graph = args.print_graph)
-            for paradigm in paradigms:
-
-                # for more than one experiment
-                # get the preferences
-                SN_preferences, SN_counts = SN.get_preferences(paradigm,\
-                    print_delegations = args.print_delegations, print_preferences = args.print_preferences)
-
-                # and get the winner for every rule
-                for rule in VotingRules.rules:
-                    # this corresponds to random tie breaking
-                    winner = VotingRules.elect(rule, SN_preferences, SN_counts, tiebreaking = lambda wins : random.choice(list(wins)))
-
-                    regrets[paradigm][rule].append(regret(winner, true_preferences, true_counts))
-                    if args.partial_regret:
-                        partial_regrets[paradigm][rule].append(partial_regret(winner, SN.id2voter.values()))
-                    if winner not in winners[paradigm][rule]:
-                        winners[paradigm][rule][winner] = 0
-                    winners[paradigm][rule][winner] += 1
-    return_dict['winners' + str(procnum)] = winners
-    return_dict['regrets' + str(procnum)] = regrets
-    return_dict['partial_regrets' + str(procnum)] = partial_regrets
-    return
 
 # since every graph type has diff. parameter spaces,
 # I have created this wrapper that returns a generator
@@ -84,6 +38,7 @@ def param_generator(graph_type):
     else:
         raise NotImplementedError()
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--seed', type=int, default=42, help='Random seed')
@@ -93,7 +48,7 @@ if __name__ == '__main__':
     parser.add_argument('--dataset_path', type=str, default='dataset/ED-00004-00000001.soc', help="If using preflib, which dataset?")
     parser.add_argument('--experiments', type=int, default=100, help='Number of experiments.')
     parser.add_argument('--graphs_per_setting', type=int, default=25, help='How many graphs to generate per param settings')
-    parser.add_argument('--voter_types', type=int, default=2, help='Number of types for \'types\' source')
+    parser.add_argument('--voter_types', type=int, default=24, help='Number of types for \'types\' source')
     parser.add_argument('--type_gen', type=str, default='half_normal', help='distribution for \'types\' source [half_normal|tshirt]')
     parser.add_argument('--print_graph', action='store_true', help='Print the generated graph')
     parser.add_argument('--print_delegations', action='store_true', help='Print the delegation chains')
@@ -101,8 +56,6 @@ if __name__ == '__main__':
     parser.add_argument('--skip_print_winners', action='store_true', help='Skip the printing of the winner counts')
     parser.add_argument('--partial_regret', action='store_true', help='Use also the alternative metric of partial regret.')
     parser.add_argument('--ttest', action='store_true', help='Perform t-test')
-    # parser.add_argument('--indecisiveness', type=float, nargs='+', default=[0.0, 0.043478260869565216, 0.08695652173913043, 0.13043478260869565, 0.17391304347826086, 0.21739130434782608, 0.30434782608695654, 0.4782608695652174, 1.0],
-    #                     help="indecisiveness distribution")
     parser.add_argument('--indecisiveness', type=float, nargs='+', default=[0, 0.3, 0.3, 0.3, 0.47, 0.47, 0.47, 1, 1, 1],
                         help="indecisiveness distribution")
 
@@ -110,14 +63,14 @@ if __name__ == '__main__':
 
     random.seed(args.seed)
 
-    graph_types = ['scale-free']
+    graph_types = ['regular']
     paradigms = ['direct', 'proxy', 'liquid']
 
     # for regret, we need a three level structure: graph type, paradigm and rule.
-    regrets = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : [])))
-    winners = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : 0))))
+    regrets = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: [])))
+    winners = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: 0))))
     if args.partial_regret:
-        partial_regrets = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : [])))
+        partial_regrets = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: [])))
 
     # this is used for the progress bar. First, we need to compute the total number
     # of graph types. Since diff. graph types have different settings, let's compute
@@ -131,11 +84,10 @@ if __name__ == '__main__':
     TOT_EXPERIMENTS = COUNT_GRAPH_SETTINGS * args.graphs_per_setting * args.experiments * len(paradigms) * len(VotingRules.rules)
 
     # possible_indecision_levels = ind_levels(args.alternatives)
-    possible_indecision_levels = args.indecisiveness
-    pr = reversed([0.18701423, 0.18126041, 0.16503948, 0.14116575, 0.11342986, 0.08562135, 0.06071463, 0.04044466, 0.02530962])
+    poss_indecision_levels = args.indecisiveness
 
     # progress bar
-    with tqdm(total=TOT_EXPERIMENTS, leave = False) as pbar:
+    with tqdm(total=TOT_EXPERIMENTS, leave=False) as pbar:
         # for all types of graphs
         for graph_type in graph_types:
 
@@ -143,47 +95,38 @@ if __name__ == '__main__':
             for params in param_generator(graph_type):
 
                 # generate some graphs with this parameters
-                graph_generator = generate_graphs(num_voters=args.voters, \
-                    num_graphs=args.graphs_per_setting, gtype=graph_type, seed = args.seed, params = params)
+                graph_generator = generate_graphs(num_voters=args.voters,
+                                                  num_graphs=args.graphs_per_setting,
+                                                  gtype=graph_type, seed=args.seed, params=params)
 
-                # for every graph
-                    # get the corresponding SN
+                for graph in graph_generator:
+                    for _ in range(args.experiments):
+                        data = Dataset(source='type_random', rand_params=[args.alternatives, args.voters, args.voter_types],
+                                       type_generation=args.type_gen)
+                        true_preferences, true_counts = data.preferences, data.counts
+                        SN = SocialNetwork(strategy='dataset_and_nx_graph', possible_indecision_levels=poss_indecision_levels,
+                                           graph=graph, dataset=data, print_graph=args.print_graph)
+                        for paradigm in paradigms:
+                            # for more than one experiment
+                            # get the preferences
+                            SN_preferences, SN_counts = SN.get_preferences(paradigm, print_delegations=args.print_delegations,
+                                                                           print_preferences=args.print_preferences)
+                            # and get the winner for every rule
+                            for rule in VotingRules.rules:
+                                # this corresponds to random tie breaking
+                                winner = VotingRules.elect(rule, SN_preferences, SN_counts,
+                                                           tiebreaking=lambda wins: random.choice(list(wins)))
 
-                    # and compare it under every paradigms
-                w = 0
-                manager = multiprocessing.Manager()
-                return_dict = manager.dict()
-                jobs = []
-                graphs = []
-
-                for i, graph in enumerate(graph_generator):
-                    graphs.append(graph)
-
-                    if len(graphs) == 5:
-                        p = multiprocessing.Process(target=worker, args=(w, return_dict, args, possible_indecision_levels, paradigms, graph_type, graphs))
-                        jobs.append(p)
-                        p.start()
-                        w += 1
-                        graphs = []
-                for proc in jobs:
-                    proc.join()
-                    pbar.update(args.experiments * 5 * 3)
-
-                for ii in range(w):
-                    for paradigm in paradigms:
-                        for rule in VotingRules.rules:
-                            regrets[graph_type][paradigm][rule] += return_dict['regrets' + str(ii)][paradigm][rule]
-                            # partial_regrets[graph_type][paradigm][rule] += return_dict['partial_regrets'][paradigm][rule]
-                            for winner in [1, 2, 3, 4]:
-                                winners[graph_type][paradigm][rule][winner] += return_dict['winners' + str(ii)][paradigm][rule].get(winner, 0)
-
-
-    # TODO: visualize each different graph setting differently?
+                                regrets[graph_type][paradigm][rule].append(regret(winner, true_preferences, true_counts))
+                                if args.partial_regret:
+                                    partial_regrets[graph_type][paradigm][rule].append(partial_regret(winner, SN.id2voter.values()))
+                                winners[graph_type][paradigm][rule][winner] += 1
+                                pbar.update(1)
 
     # print result
-    def print_results(data, name = 'regret', print_winners = True):
+    def print_results(data, name='regret', print_winners=True):
         # by default, we say it is not passed
-        t_tests = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : 'FAILED'))))
+        t_tests = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: 'FAILED'))))
         for graph_type in graph_types:
             for rule in VotingRules.rules:
                 for paradigm in paradigms:
@@ -214,10 +157,8 @@ if __name__ == '__main__':
                         others_two = list(set(paradigms) - {paradigm})
                         print(f"{graph_type}, {rule}, {others_two[0]}/{others_two[1]}: {t_tests[graph_type][others_two[0]][others_two[1]][rule]}")
                 print('##')
-
         print("*********")
-
 
     print_results(regrets)
     if args.partial_regret:
-        print_results(partial_regrets, name = 'partial regret', print_winners = False)
+        print_results(partial_regrets, name='partial regret', print_winners=False)
