@@ -14,7 +14,10 @@ from voter import Voter
 from votingrules import VotingRules
 from tqdm import tqdm
 
-
+# given a dictionary of voters,
+# return two lists:
+# one is a list of lists of integers (the preferences)
+# one is a list of integers (how many people have that preference)
 def get_counts(id2voter):
     # this enables us to use the Counter
     to_key = lambda pref: ' '.join(map(str, pref))
@@ -48,7 +51,7 @@ if __name__ == "__main__":
     parser.add_argument('--clique_size', type=int, default=30, help='clique size')
     parser.add_argument('--seed', type=int, default=42, help='rand seed')
     parser.add_argument('--experiments', type=int, default=100, help='rand seed')
-    parser.add_argument('--indecisiveness', type=float, nargs='+', default=[0, 0.2, 0.2, 0.2, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+    parser.add_argument('--indecisiveness', type=float, nargs='+', default=[0 0 0 0.3 0.3 1],
         help="indecisiveness distribution")
     args = parser.parse_args()
 
@@ -61,14 +64,14 @@ if __name__ == "__main__":
     regrets = defaultdict(lambda : defaultdict(lambda : []))
     winners = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : 0)))
 
+    # generate one graph
     graph = list(generate_graphs(args.num_cliques * args.clique_size, 1, 'caveman', args.seed, {'clique_size': args.clique_size}))[0]
 
-    # nx.draw(graph, with_labels=True, font_weight='bold')
-    # plt.show()
-
+    # voter-type sampler
     generator = VoterTypes(type_num, 'half_normal')
     possible_indecision_levels = args.indecisiveness
 
+    # progress bar
     with tqdm(total=args.experiments**2, leave=False) as pbar:
 
         for _ in range(args.experiments):
