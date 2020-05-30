@@ -47,6 +47,6 @@ We have normalized the indecision levels. For 4 alternatives, 0→1 strict order
 
 To do the IMPARTIAL CULTURE experiment:
 
-* `python random_graph_experiment.py --voters_source types --experiments 100 --graphs_per_setting 25 --voters 100 --indecisiveness 0 0 0 0.3 0.3 1` (IND1)
-* `python random_graph_experiment.py --voters_source types --experiments 100 --graphs_per_setting 25 --voters 100 --indecisiveness 0 0.3 0.3 0.3 0.47 0.47 0.47 1 1 1` (IND2)
-* `python random_graph_experiment.py --voters_source types --experiments 100 --graphs_per_setting 25 --voters 100 --indecisiveness 1 1 1 0.3 0.3 0` (IND3)
+* `python random_graph_experiment.py --experiments 100 --graphs_per_setting 25 --voters 100 --indecisiveness 0 0 0 0.3 0.3 1` (IND1)
+* `python random_graph_experiment.py --experiments 100 --graphs_per_setting 25 --voters 100 --indecisiveness 0 0.3 0.3 0.3 0.47 0.47 0.47 1 1 1` (IND2)
+* `python random_graph_experiment.py --experiments 100 --graphs_per_setting 25 --voters 100 --indecisiveness 1 1 1 0.3 0.3 0` (IND3)
