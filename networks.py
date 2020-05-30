@@ -15,6 +15,7 @@ def random_network(n, p, seed):
     return nx.DiGraph(graph)
 
 
+# generate a random graph
 def generate_graphs(num_voters, num_graphs, gtype='scale-free', seed=42, params = dict()):
     if 'clique_size' in params.keys():
         assert num_voters % params['clique_size'] == 0, f"Cliques must be of equal size: number of voters must be a multiple \
