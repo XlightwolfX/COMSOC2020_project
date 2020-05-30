@@ -1,6 +1,6 @@
 import networkx as nx
-import itertools
 import random
+
 
 class PartialOrder:
     """Class representing a partial order."""
@@ -36,7 +36,6 @@ class PartialOrder:
                 graph[head].remove(tail)
                 order = PartialOrder(graph)
 
-
     def __init__(self, inpt):
         """Initialize the object with a partial.
 
@@ -55,14 +54,14 @@ class PartialOrder:
 
         # MAKE IT TRANSITIVE
         G = nx.algorithms.dag.transitive_closure(nx.DiGraph(partial))
-        self.partial = {n:list(G.successors(n)) for n in G.nodes()}
+        self.partial = {n: list(G.successors(n)) for n in G.nodes()}
         # will be populated at the first call of get_strict_orders
         self._strict_orders = None
 
         self.edges = {(i, j) for i in self.partial.keys() for j in self.partial[i]}
 
         # max number of strict orders with this alternatives: will be used in a function
-        factorial = lambda n : 1 if n <= 1 else n * factorial(n-1)
+        factorial = lambda n: 1 if n <= 1 else n * factorial(n-1)
         self.MAX_STRICT_ORDERS = factorial(len(partial))
 
     def __repr__(self):

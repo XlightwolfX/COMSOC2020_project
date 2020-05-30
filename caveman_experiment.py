@@ -44,7 +44,6 @@ def get_counts(id2voter):
     return preferences, counts
 
 
-
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('--num_cliques', type=int, default=6, help='Number of cliques.')
@@ -59,10 +58,9 @@ if __name__ == "__main__":
     paradigms = ['direct', 'proxy', 'liquid']
     type_num = args.num_cliques
 
-    all_types = list(permutations([1,2,3,4]))
-
-    regrets = defaultdict(lambda : defaultdict(lambda : []))
-    winners = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : 0)))
+    all_types = list(permutations([1, 2, 3, 4]))
+    regrets = defaultdict(lambda: defaultdict(lambda: []))
+    winners = defaultdict(lambda: defaultdict(lambda: defaultdict(lambda: 0)))
 
     # generate one graph
     graph = list(generate_graphs(args.num_cliques * args.clique_size, 1, 'caveman', args.seed, {'clique_size': args.clique_size}))[0]
@@ -73,16 +71,15 @@ if __name__ == "__main__":
 
     # progress bar
     with tqdm(total=args.experiments**2, leave=False) as pbar:
-
         for _ in range(args.experiments):
             id2voter = {}
 
             random.shuffle(all_types)
             type_list = all_types[:type_num]
-            
+
             for i in range(type_num):
                 t = type_list[i]
-                for j in range(i * args.clique_size,(i + 1) *  args.clique_size):
+                for j in range(i * args.clique_size, (i + 1) * args.clique_size):
                     strict = generator.generate(list(t))
                     # strict = list(t)
                     partial = PartialOrder.generate_from_strict(strict, random.choice(possible_indecision_levels))
@@ -95,7 +92,6 @@ if __name__ == "__main__":
 
             for _ in range(args.experiments):
                 for paradigm in paradigms:
-
 
                     # get the preferences
                     SN_preferences, SN_counts = SN.get_preferences(paradigm)

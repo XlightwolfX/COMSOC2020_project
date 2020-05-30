@@ -92,7 +92,7 @@ class Dataset:
 
             with open(source, 'r') as f:
                 raw = f.readlines()
-                tokens = [[int(j) if self._is_int(j) else j  for j in i.strip('\n').split(',')] for i in raw]
+                tokens = [[int(j) if self._is_int(j) else j for j in i.strip('\n').split(',')] for i in raw]
 
         for line_num, line in enumerate(tokens):
             if line_num == 0:
