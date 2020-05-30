@@ -67,20 +67,6 @@ if __name__ == '__main__':
 
     paradigms = ['direct', 'proxy', 'liquid']
 
-    # TODO move this inside loop?
-    # if args.voters_source == 'random':
-    #     data = Dataset(source='random', rand_params=[args.alternatives, args.voters])
-    #     true_preferences, true_counts = data.preferences, data.counts
-    # elif args.voters_source == 'preflib':
-    #     data = Dataset(source=args.dataset_path)
-    #     true_preferences, true_counts = data.preferences, data.counts
-    # elif args.voters_source == 'types':
-    #     data = Dataset(source='type_random', rand_params=[args.alternatives, args.voters, args.voter_types],
-    #                    type_generation=args.type_gen)
-    #     true_preferences, true_counts = data.preferences, data.counts
-    # else:
-    #     raise NotImplementedError('Unknown voter source')
-
     # for regret, we need a three level structure: graph type, paradigm and rule.
     regrets = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : [])))
     winners = defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : defaultdict(lambda : 0))))
@@ -156,8 +142,6 @@ if __name__ == '__main__':
                                 # update the progress bar
                                 pbar.update(1)
 
-    # TODO: visualize each different graph setting differently?
-
     # print result
     def print_results(data, name = 'regret', print_winners = True):
         # by default, we say it is not passed
@@ -192,8 +176,6 @@ if __name__ == '__main__':
                 print('##')
 
         print("*********")
-
-
 
     print_results(regrets)
     if args.partial_regret:
