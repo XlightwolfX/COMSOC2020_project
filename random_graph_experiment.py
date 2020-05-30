@@ -61,7 +61,7 @@ if __name__ == '__main__':
 
     random.seed(args.seed)
 
-    graph_types = ['path', 'random', 'regular', 'scale-free', 'small-world']
+    graph_types = ['regular']
     paradigms = ['direct', 'proxy', 'liquid']
 
     # TODO move this inside loop?
