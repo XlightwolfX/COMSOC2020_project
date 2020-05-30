@@ -15,7 +15,7 @@ Repository for a project of Computational Social Choice 2020 on UvA.
 * `socialnetwork.py` Is a class representing a social net
 * `voter.py` Is a class representing a voter
 
-The rest is experiment scripts, described below
+The rest is experiment scripts, described below. Note that this code requires the `networkx-2.4` Python package.
 
 ## Caveman Experiment
 
